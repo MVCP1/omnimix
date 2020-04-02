@@ -1,0 +1,278 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://scenes/player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://objects/Modular Temple/Tower_Wall_Tall_Doorway.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://scenes/caixa.tscn" type="PackedScene" id=4]
+[ext_resource path="res://objects/Modular Temple/Tower_Wall_Normal_Window.obj" type="ArrayMesh" id=5]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.282353, 0.729412, 0.458824, 1 )
+metallic = 0.3
+metallic_specular = 0.86
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.6, 0.564706, 0, 1 )
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 0.894118, 0.992157, 0.0235294, 1 )
+
+[sub_resource type="SpatialMaterial" id=4]
+albedo_color = Color( 0.560784, 0.388235, 0.0117647, 1 )
+
+[sub_resource type="SpatialMaterial" id=5]
+albedo_color = Color( 0.501961, 0.0941176, 0.027451, 1 )
+
+[sub_resource type="SpatialMaterial" id=6]
+albedo_color = Color( 0.854902, 0.0156863, 0.0156863, 1 )
+
+[sub_resource type="SpatialMaterial" id=7]
+albedo_color = Color( 0.196078, 0.160784, 0.85098, 1 )
+metallic = 1.0
+metallic_specular = 0.0
+roughness = 0.45
+
+[sub_resource type="SpatialMaterial" id=8]
+albedo_color = Color( 0.760784, 0.192157, 0.647059, 1 )
+
+[sub_resource type="ConcavePolygonShape" id=9]
+data = PoolVector3Array( 0.6627, 0, -1.6, 1.1314, 0, -1.1314, 1.1314, 1, -1.1314, 0.6627, 1, -1.6, 0.6627, 0, -1.6, 1.1314, 1, -1.1314, -0.9899, 0, -0.9899, -0.5799, 0, -1.4, -1.1314, 0, -1.1314, -0.5799, 0, -1.4, 0, 0, -1.4, -0.6627, 0, -1.6, -0.6627, 0, -1.6, 0, 0, -1.4, 0, 0, -1.6, 0.6627, 0, -1.6, 0, 0, -1.6, 0, 0, -1.4, 1.1314, 0, -1.1314, 0.6627, 0, -1.6, 0.5799, 0, -1.4, 0.9899, 0, -0.9899, 1.1314, 0, -1.1314, 0.5799, 0, -1.4, 0.5799, 0, -1.4, 0.6627, 0, -1.6, 0, 0, -1.4, -1.1314, 0, -1.1314, -0.5799, 0, -1.4, -0.6627, 0, -1.6, -0.6627, 1, -1.6, -1.1314, 1, -1.1314, -1.1314, 0, -1.1314, -0.6627, 0, -1.6, -0.6627, 1, -1.6, -1.1314, 0, -1.1314, -0.9899, 0, -0.9899, -1.1314, 0, -1.1314, -1.1314, 1, -1.1314, -0.9899, 1, -0.9899, -0.9899, 0, -0.9899, -1.1314, 1, -1.1314, -0.5799, 0, -1.4, -0.9899, 0, -0.9899, -0.9899, 1, -0.9899, -0.5799, 1, -1.4, -0.5799, 0, -1.4, -0.9899, 1, -0.9899, 0, 0.95, -1.4, -0.0574, 0.9386, -1.4, 0, 1, -1.4, 0, 1, -1.4, 0.5799, 1, -1.4, 0.1061, 0.9061, -1.4, 0.1386, 0.8574, -1.4, 0.1061, 0.9061, -1.4, 0.5799, 1, -1.4, 0.15, 0.8, -1.4, 0.1386, 0.8574, -1.4, 0.5799, 1, -1.4, 0.15, 0.35, -1.4, 0.15, 0.8, -1.4, 0.5799, 0, -1.4, 0, 0, -1.4, 0.15, 0.35, -1.4, 0.5799, 0, -1.4, 0, 0, -1.4, -0.5799, 0, -1.4, -0.15, 0.35, -1.4, -0.5799, 0, -1.4, -0.5799, 1, -1.4, -0.15, 0.8, -1.4, -0.1061, 0.9061, -1.4, -0.1386, 0.8574, -1.4, -0.5799, 1, -1.4, -0.15, 0.8, -1.4, -0.5799, 1, -1.4, -0.1386, 0.8574, -1.4, -0.15, 0.35, -1.4, -0.5799, 0, -1.4, -0.15, 0.8, -1.4, 0, 0.35, -1.4, 0, 0, -1.4, -0.15, 0.35, -1.4, 0, 0.35, -1.4, 0.15, 0.35, -1.4, 0, 0, -1.4, 0.5799, 0, -1.4, 0.15, 0.8, -1.4, 0.5799, 1, -1.4, 0.0574, 0.9386, -1.4, 0, 1, -1.4, 0.1061, 0.9061, -1.4, 0, 1, -1.4, -0.1061, 0.9061, -1.4, -0.5799, 1, -1.4, 0, 0.95, -1.4, 0, 1, -1.4, 0.0574, 0.9386, -1.4, -0.0574, 0.9386, -1.4, -0.1061, 0.9061, -1.4, 0, 1, -1.4, 0.1386, 0.8574, -1.4, 0.1386, 0.8574, -1.6, 0.1061, 0.9061, -1.6, 0.1061, 0.9061, -1.4, 0.1386, 0.8574, -1.4, 0.1061, 0.9061, -1.6, 0.1061, 0.9061, -1.4, 0.1061, 0.9061, -1.6, 0.0574, 0.9386, -1.6, 0.0574, 0.9386, -1.4, 0.1061, 0.9061, -1.4, 0.0574, 0.9386, -1.6, 0.0574, 0.9386, -1.4, 0.0574, 0.9386, -1.6, 0, 0.95, -1.6, 0, 0.95, -1.4, 0.0574, 0.9386, -1.4, 0, 0.95, -1.6, 0, 0.95, -1.4, 0, 0.95, -1.6, -0.0574, 0.9386, -1.6, -0.0574, 0.9386, -1.4, 0, 0.95, -1.4, -0.0574, 0.9386, -1.6, -0.0574, 0.9386, -1.4, -0.0574, 0.9386, -1.6, -0.1061, 0.9061, -1.6, -0.1061, 0.9061, -1.4, -0.0574, 0.9386, -1.4, -0.1061, 0.9061, -1.6, -0.1061, 0.9061, -1.4, -0.1061, 0.9061, -1.6, -0.1386, 0.8574, -1.6, -0.1386, 0.8574, -1.4, -0.1061, 0.9061, -1.4, -0.1386, 0.8574, -1.6, -0.1386, 0.8574, -1.4, -0.1386, 0.8574, -1.6, -0.15, 0.8, -1.6, -0.15, 0.8, -1.4, -0.1386, 0.8574, -1.4, -0.15, 0.8, -1.6, -0.15, 0.8, -1.4, -0.15, 0.8, -1.6, -0.15, 0.35, -1.6, -0.15, 0.35, -1.4, -0.15, 0.8, -1.4, -0.15, 0.35, -1.6, -0.15, 0.35, -1.4, -0.15, 0.35, -1.6, 0, 0.35, -1.4, 0.15, 0.35, -1.6, 0, 0.35, -1.4, 0, 0.35, -1.6, 0.15, 0.35, -1.4, 0, 0.35, -1.4, 0.15, 0.35, -1.6, -0.15, 0.35, -1.6, 0, 0.35, -1.6, 0, 0.35, -1.4, 0.15, 0.35, -1.4, 0.15, 0.35, -1.6, 0.15, 0.8, -1.6, 0.15, 0.8, -1.4, 0.15, 0.35, -1.4, 0.15, 0.8, -1.6, 0.15, 0.8, -1.4, 0.15, 0.8, -1.6, 0.1386, 0.8574, -1.6, 0.1386, 0.8574, -1.4, 0.15, 0.8, -1.4, 0.1386, 0.8574, -1.6, 0.5799, 1, -1.4, 0.9899, 1, -0.9899, 0.9899, 0, -0.9899, 0.5799, 0, -1.4, 0.5799, 1, -1.4, 0.9899, 0, -0.9899, 0.9899, 1, -0.9899, 1.1314, 1, -1.1314, 1.1314, 0, -1.1314, 0.9899, 0, -0.9899, 0.9899, 1, -0.9899, 1.1314, 0, -1.1314, -0.9899, 1, -0.9899, -1.1314, 1, -1.1314, -0.5799, 1, -1.4, -0.5799, 1, -1.4, -0.6627, 1, -1.6, 0, 1, -1.4, 0.6627, 1, -1.6, 0, 1, -1.4, 0, 1, -1.6, 1.1314, 1, -1.1314, 0.5799, 1, -1.4, 0.6627, 1, -1.6, 0.9899, 1, -0.9899, 0.5799, 1, -1.4, 1.1314, 1, -1.1314, 0.5799, 1, -1.4, 0, 1, -1.4, 0.6627, 1, -1.6, -0.6627, 1, -1.6, 0, 1, -1.6, 0, 1, -1.4, -1.1314, 1, -1.1314, -0.6627, 1, -1.6, -0.5799, 1, -1.4, 0, 0.95, -1.6, 0.0574, 0.9386, -1.6, 0, 1, -1.6, 0, 1, -1.6, -0.6627, 1, -1.6, -0.1061, 0.9061, -1.6, -0.1386, 0.8574, -1.6, -0.1061, 0.9061, -1.6, -0.6627, 1, -1.6, -0.15, 0.8, -1.6, -0.1386, 0.8574, -1.6, -0.6627, 1, -1.6, -0.15, 0.35, -1.6, -0.15, 0.8, -1.6, -0.6627, 0, -1.6, 0, 0, -1.6, -0.15, 0.35, -1.6, -0.6627, 0, -1.6, 0, 0, -1.6, 0.6627, 0, -1.6, 0.15, 0.35, -1.6, 0.6627, 0, -1.6, 0.6627, 1, -1.6, 0.15, 0.8, -1.6, 0.1386, 0.8574, -1.6, 0.6627, 1, -1.6, 0.1061, 0.9061, -1.6, 0.15, 0.8, -1.6, 0.6627, 1, -1.6, 0.1386, 0.8574, -1.6, 0.15, 0.35, -1.6, 0.6627, 0, -1.6, 0.15, 0.8, -1.6, 0, 0.35, -1.6, 0, 0, -1.6, 0.15, 0.35, -1.6, 0, 0.35, -1.6, -0.15, 0.35, -1.6, 0, 0, -1.6, -0.6627, 0, -1.6, -0.15, 0.8, -1.6, -0.6627, 1, -1.6, -0.0574, 0.9386, -1.6, 0, 1, -1.6, -0.1061, 0.9061, -1.6, 0.6627, 1, -1.6, 0, 1, -1.6, 0.1061, 0.9061, -1.6, 0, 0.95, -1.6, 0, 1, -1.6, -0.0574, 0.9386, -1.6, 0.0574, 0.9386, -1.6, 0.1061, 0.9061, -1.6, 0, 1, -1.6 )
+
+[node name="main" type="Spatial"]
+
+[node name="player" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.13828, 2.10087, 0 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, -0.695193, 0.718823, 0, -0.718823, -0.695193, 0.881597, 4.60947, 3.95288 )
+shadow_enabled = true
+
+[node name="BakedLightmap" type="BakedLightmap" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.717832, 0.335711, -0.107266 )
+image_path = "res://"
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.624139, -0.409263, 0.665548, 0.0486741, 0.870545, 0.489675, -0.779795, -0.273231, 0.563262, 17.9435, 12.6448, 16.2061 )
+size = 8.0
+near = 0.01
+far = 321.0
+
+[node name="Tower_Wall_Tall_Doorway" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.414902, -1.80783, -1.55252 )
+mesh = ExtResource( 3 )
+material/0 = null
+material/1 = null
+material/2 = null
+material/3 = null
+material/4 = null
+
+[node name="caixa" parent="." instance=ExtResource( 4 )]
+transform = Transform( 15.5115, 0, 0, 0, 0.25, 0, 0, 0, 6.27581, -16.3597, 0, 9.25587 )
+material = SubResource( 1 )
+
+[node name="caixa25" parent="." instance=ExtResource( 4 )]
+transform = Transform( 15.5115, 0, 0, 0, 0.25, 0, 0, 0, 15.5115, -16.5785, 0, 29.9293 )
+material = SubResource( 1 )
+
+[node name="caixa26" parent="." instance=ExtResource( 4 )]
+transform = Transform( 15.5115, 0, 0, 0, 0.25, 0, 0, 0, 15.5115, 14.4314, 0, 29.9293 )
+material = SubResource( 1 )
+
+[node name="caixa18" parent="." instance=ExtResource( 4 )]
+transform = Transform( 15.5115, 0, 0, 0, 0.25, 0, 0, 0, 15.5115, -5.26629, 0, -11.9065 )
+material = SubResource( 1 )
+
+[node name="caixa16" parent="." instance=ExtResource( 4 )]
+transform = Transform( 15.5115, 0, 0, 0, 0.25, 0, 0, 0, 15.5115, 25.6953, 0, -21.7267 )
+material = SubResource( 1 )
+
+[node name="caixa19" parent="." instance=ExtResource( 4 )]
+transform = Transform( 3.64436, 0, 0, 0, 0.25, 0, 0, 0, 3.64436, 5.91003, 0, -31.935 )
+material = SubResource( 1 )
+
+[node name="caixa20" parent="." instance=ExtResource( 4 )]
+transform = Transform( 3.64436, 0, 0, 0, 0.25, 0, 0, 0, 3.64436, 3.046, 0, -31.821 )
+material = SubResource( 1 )
+
+[node name="caixa27" parent="." instance=ExtResource( 4 )]
+transform = Transform( 15.5115, 0, 0, 0, 0.25, 0, 0, 0, 10.1279, 28.3013, 0.0249977, 4.02109 )
+material = SubResource( 1 )
+
+[node name="caixa28" parent="." instance=ExtResource( 4 )]
+transform = Transform( 15.5115, 0, 0, 0, 0.25, 0, 0, 0, 15.5115, 4.32841, -5.14918, -1.1131 )
+material = SubResource( 1 )
+
+[node name="escada" type="Spatial" parent="."]
+
+[node name="caixa2" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.201302, 0, 0, 0, 1, -9.5824, 0.445749, 2.53678 )
+material = SubResource( 2 )
+
+[node name="caixa18" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.112292, 0, 0, 0, 1, -11.5378, 0.311444, 2.53678 )
+material = SubResource( 3 )
+
+[node name="caixa6" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.271775, 0, 0, 0, 1, -7.65442, 0.524116, 2.53678 )
+material = SubResource( 4 )
+
+[node name="caixa11" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.43849, 0, 0, 0, 1, -5.69269, 0.637907, 2.53678 )
+material = SubResource( 5 )
+
+[node name="caixa17" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.630564, 0, 0, 0, 1, -3.73032, 0.888162, 2.53678 )
+material = SubResource( 6 )
+
+[node name="caixa4" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.201302, 0, 0, 0, 1, -9.5824, 1.25208, -1.39489 )
+material = SubResource( 2 )
+
+[node name="caixa20" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.112292, 0, 0, 0, 1, -11.5378, 0.761234, -1.39489 )
+material = SubResource( 3 )
+
+[node name="caixa8" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.271775, 0, 0, 0, 1, -7.65442, 1.61273, -1.39489 )
+material = SubResource( 4 )
+
+[node name="caixa12" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.43849, 0, 0, 0, 1, -5.69269, 2.3943, -1.39489 )
+material = SubResource( 5 )
+
+[node name="caixa15" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.630564, 0, 0, 0, 1, -3.73032, 3.41392, -1.39489 )
+material = SubResource( 6 )
+
+[node name="caixa3" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.201302, 0, 0, 0, 1, -9.5824, 0.85126, 0.559218 )
+material = SubResource( 2 )
+
+[node name="caixa21" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.112292, 0, 0, 0, 1, -11.5378, 0.537649, 0.559218 )
+material = SubResource( 3 )
+
+[node name="caixa9" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.271775, 0, 0, 0, 1, -7.65442, 1.07159, 0.559218 )
+material = SubResource( 4 )
+
+[node name="caixa13" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.43849, 0, 0, 0, 1, -5.69269, 1.52122, 0.559218 )
+material = SubResource( 5 )
+
+[node name="caixa16" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.630564, 0, 0, 0, 1, -3.73032, 2.1584, 0.559218 )
+material = SubResource( 6 )
+
+[node name="caixa5" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.201302, 0, 0, 0, 1, -9.5824, 1.65759, -3.37245 )
+material = SubResource( 2 )
+
+[node name="caixa19" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.112292, 0, 0, 0, 1, -11.5378, 0.987439, -3.37245 )
+material = SubResource( 3 )
+
+[node name="caixa7" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.271775, 0, 0, 0, 1, -7.65442, 2.1602, -3.37245 )
+material = SubResource( 4 )
+
+[node name="caixa10" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.43849, 0, 0, 0, 1, -5.69269, 3.27762, -3.37245 )
+material = SubResource( 5 )
+
+[node name="caixa14" parent="escada" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 0.630564, 0, 0, 0, 1, -3.73032, 4.68416, -3.37245 )
+material = SubResource( 6 )
+
+[node name="caixa2" parent="." instance=ExtResource( 4 )]
+transform = Transform( -6.91566e-08, 0, -8.53723, -0.162995, 3.45795e-08, 3.84457e-08, 1.06187e-08, 1.99635, -2.53171e-15, 4.74279, 5.11703, 14.1265 )
+material = SubResource( 7 )
+
+[node name="caixa24" parent="." instance=ExtResource( 4 )]
+transform = Transform( -6.91566e-08, 0, -8.53723, -0.162995, 3.45795e-08, 3.84457e-08, 1.06187e-08, 1.99635, -2.53171e-15, 4.74279, -0.0222991, 14.1265 )
+material = SubResource( 7 )
+
+[node name="caixa8" parent="." instance=ExtResource( 4 )]
+transform = Transform( 6.36191e-09, 0, 0.785365, -0.162995, 3.45795e-08, 3.84457e-08, 3.58265e-09, 0.673548, -8.5417e-16, 4.74279, 1.07904, -16.5271 )
+material = SubResource( 8 )
+
+[node name="caixa9" parent="." instance=ExtResource( 4 )]
+transform = Transform( 6.36191e-09, 0, 0.785365, -0.162995, 3.45795e-08, 3.84457e-08, 3.58265e-09, 0.673548, -8.5417e-16, 6.95312, 2.41256, -16.5271 )
+material = SubResource( 8 )
+
+[node name="caixa10" parent="." instance=ExtResource( 4 )]
+transform = Transform( 6.36191e-09, 0, 0.785365, -0.162995, 3.45795e-08, 3.84457e-08, 3.58265e-09, 0.673548, -8.5417e-16, 9.15517, 3.67836, -16.5271 )
+material = SubResource( 8 )
+
+[node name="caixa12" parent="." instance=ExtResource( 4 )]
+transform = Transform( -6.36191e-09, -5.88834e-08, -0.785365, -0.162995, 3.45795e-08, 3.84457e-08, -3.58265e-09, -0.673548, 6.86588e-08, -7.7591, 3.67836, -15.686 )
+material = SubResource( 8 )
+
+[node name="caixa13" parent="." instance=ExtResource( 4 )]
+transform = Transform( -6.36191e-09, -5.88834e-08, -0.785365, -0.162995, 3.45795e-08, 3.84457e-08, -3.58265e-09, -0.673548, 6.86588e-08, -9.64242, 5.29887, -12.6823 )
+material = SubResource( 8 )
+
+[node name="caixa14" parent="." instance=ExtResource( 4 )]
+transform = Transform( -6.36191e-09, -5.88834e-08, -0.785365, -0.162995, 3.45795e-08, 3.84457e-08, -3.58265e-09, -0.673548, 6.86588e-08, -5.01592, 3.03715, -13.342 )
+material = SubResource( 8 )
+
+[node name="caixa15" parent="." instance=ExtResource( 4 )]
+transform = Transform( -6.36191e-09, -5.88834e-08, -0.785365, -0.162995, 3.45795e-08, 3.84457e-08, -3.58265e-09, -0.673548, 6.86588e-08, -2.11269, 1.02102, -16.2351 )
+material = SubResource( 8 )
+
+[node name="caixa11" parent="." instance=ExtResource( 4 )]
+transform = Transform( 6.36191e-09, 0, 0.785365, -0.162995, 3.45795e-08, 3.84457e-08, 3.58265e-09, 0.673548, -8.5417e-16, 11.1315, 4.83643, -16.5271 )
+material = SubResource( 8 )
+
+[node name="caixa3" parent="." instance=ExtResource( 4 )]
+transform = Transform( -1.77031e-09, 1.89276e-07, 1.717, 0.0701481, 2.5, 3.55326e-15, -0.0405, 4.33013, -7.50525e-08, 8.34152, 2.71508, 7.88882 )
+material = SubResource( 7 )
+
+[node name="caixa23" parent="." instance=ExtResource( 4 )]
+transform = Transform( -1.77031e-09, 1.89276e-07, 1.717, 0.0701481, 2.5, 3.55326e-15, -0.0405, 4.33013, -7.50525e-08, 8.34152, -2.41794, 7.88882 )
+material = SubResource( 7 )
+
+[node name="caixa7" parent="." instance=ExtResource( 4 )]
+transform = Transform( -9.1638e-10, 4.2222e-07, 1.717, 0.07824, 2.58819, 0, -0.0209643, 9.65926, -7.50525e-08, 11.8297, 2.62231, 2.6578 )
+material = SubResource( 7 )
+
+[node name="caixa29" parent="." instance=ExtResource( 4 )]
+transform = Transform( -9.1638e-10, 4.2222e-07, 1.717, 0.0658664, 7.31431, -3.72295e-08, -0.0628749, 20.3444, -1.62565e-07, 22.0952, 5.94813, -16.2394 )
+material = SubResource( 7 )
+
+[node name="caixa17" parent="." instance=ExtResource( 4 )]
+transform = Transform( -9.81276e-10, 4.52121e-07, 1.83859, 0.07824, 2.58819, 0, -0.0209643, 9.65926, -7.50525e-08, 11.9233, -2.46696, 2.51004 )
+material = SubResource( 7 )
+
+[node name="caixa4" parent="." instance=ExtResource( 4 )]
+transform = Transform( -2.5036e-09, 1.23634e-07, 1.717, 0.0572756, 2.82843, 0, -0.0572756, 2.82843, -7.50525e-08, 4.76241, 2.38212, 9.34959 )
+material = SubResource( 7 )
+
+[node name="caixa5" parent="." instance=ExtResource( 4 )]
+transform = Transform( -3.05796e-09, 6.12279e-08, 1.71674, 0.0403903, 2.42614, 0, -0.069958, 1.40073, -7.5041e-08, 1.20256, 2.71508, 10.7763 )
+material = SubResource( 7 )
+
+[node name="caixa22" parent="." instance=ExtResource( 4 )]
+transform = Transform( -2.5036e-09, 1.23634e-07, 1.717, 0.0572756, 2.82843, 0, -0.0572756, 2.82843, -7.50525e-08, 4.76241, -2.72349, 9.34959 )
+material = SubResource( 7 )
+
+[node name="caixa21" parent="." instance=ExtResource( 4 )]
+transform = Transform( -3.05796e-09, 6.12279e-08, 1.71674, 0.0403903, 2.42614, 0, -0.069958, 1.40073, -7.5041e-08, 1.20256, -2.33298, 10.7763 )
+material = SubResource( 7 )
+
+[node name="caixa6" parent="." instance=ExtResource( 4 )]
+transform = Transform( -3.53103e-09, 0, 1.71674, 0, 2.80146, 0, -0.0807806, 0, -7.5041e-08, -2.38324, 2.33016, 12.0435 )
+material = SubResource( 7 )
+
+[node name="KinematicBody" type="KinematicBody" parent="."]
+transform = Transform( 2, 0, 0, 0, 2, 0, 0, 0, 1, -6.73892, -0.72097, -2.92245 )
+
+[node name="Tower_Wall_Normal_Window" type="MeshInstance" parent="KinematicBody"]
+transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0 )
+mesh = ExtResource( 5 )
+material/0 = null
+material/1 = null
+material/2 = null
+
+[node name="CollisionShape2" type="CollisionShape" parent="KinematicBody"]
+transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0 )
+shape = SubResource( 9 )
