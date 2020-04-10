@@ -1,20 +1,18 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://script/player.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://sprites/crosshair.png" type="Texture" id=3]
+[ext_resource path="res://sample/explosion.wav" type="AudioStream" id=4]
 
 [sub_resource type="CapsuleShape" id=1]
 height = 0.826801
 
-[sub_resource type="SpatialMaterial" id=2]
-albedo_color = Color( 0.294118, 0.717647, 0.12549, 1 )
-metallic = 1.0
-metallic_specular = 1.0
-roughness = 0.0
-ao_enabled = true
-ao_light_affect = 0.0
-ao_on_uv2 = false
-ao_texture_channel = 0
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.2, 0.854902, 0.105882, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.560784, 0.560784, 0.560784, 1 )
 
 [node name="player" type="KinematicBody"]
 script = ExtResource( 1 )
@@ -28,61 +26,67 @@ cast_to = Vector3( 0, -1.5, 0 )
 transform = Transform( -4.37114e-08, -1, 4.37114e-08, 3.82137e-15, 4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0, 0, 0 )
 shape = SubResource( 1 )
 
-[node name="CSGCylinder" type="CSGCylinder" parent="."]
+[node name="icon" type="CSGCylinder" parent="."]
 radius = 0.657496
 height = 2.26025
-material = SubResource( 2 )
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.93129, 0, 0 )
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, -1 )
 texture = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
-current = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera"]
 
 [node name="Sprite" type="Sprite" parent="Camera/CanvasLayer"]
+modulate = Color( 0.772549, 0.772549, 0.772549, 1 )
 position = Vector2( 512, 300 )
 scale = Vector2( 0.25, 0.25 )
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 
 [node name="Sprite2" type="Sprite" parent="Camera/CanvasLayer"]
+visible = false
 modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 162.004, 45.5882 )
 texture = ExtResource( 2 )
 
 [node name="Sprite6" type="Sprite" parent="Camera/CanvasLayer"]
+visible = false
 modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 54.4298, 47.2134 )
 texture = ExtResource( 2 )
 
 [node name="Sprite3" type="Sprite" parent="Camera/CanvasLayer"]
+visible = false
 modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 47.4365, 561.969 )
 scale = Vector2( 0.710156, 0.710156 )
 texture = ExtResource( 2 )
 
 [node name="Sprite4" type="Sprite" parent="Camera/CanvasLayer"]
+visible = false
 modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 259.092, 562.304 )
 scale = Vector2( 0.710156, 0.710156 )
 texture = ExtResource( 2 )
 
 [node name="Sprite7" type="Sprite" parent="Camera/CanvasLayer"]
+visible = false
 modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 372.807, 559.596 )
 scale = Vector2( 0.710156, 0.710156 )
 texture = ExtResource( 2 )
 
 [node name="Sprite5" type="Sprite" parent="Camera/CanvasLayer"]
+visible = false
 modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 150.193, 560.499 )
 scale = Vector2( 0.710156, 0.710156 )
 texture = ExtResource( 2 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 135.911
 margin_top = 81.194
 margin_right = 206.911
@@ -93,6 +97,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel2" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 12.5736
 margin_top = 519.812
 margin_right = 85.5736
@@ -103,6 +108,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel8" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 12.0
 margin_top = 417.0
 margin_right = 99.0
@@ -116,6 +122,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel3" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 16.8078
 margin_top = 479.516
 margin_right = 250.808
@@ -125,6 +132,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel7" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 16.8078
 margin_top = 432.586
 margin_right = 250.808
@@ -134,6 +142,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel4" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 217.607
 margin_top = 521.136
 margin_right = 307.607
@@ -144,6 +153,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel9" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 343.054
 margin_top = 521.136
 margin_right = 433.054
@@ -154,6 +164,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel5" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 109.441
 margin_top = 520.136
 margin_right = 207.441
@@ -164,6 +175,7 @@ __meta__ = {
 }
 
 [node name="RichTextLabel6" type="RichTextLabel" parent="Camera/CanvasLayer"]
+visible = false
 margin_left = 11.3556
 margin_top = 82.6681
 margin_right = 302.355
@@ -172,3 +184,27 @@ text = "PÉS NO CHÃO"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="ProgressBar" type="ProgressBar" parent="Camera/CanvasLayer"]
+margin_left = 889.39
+margin_top = 546.736
+margin_right = 996.39
+margin_bottom = 576.736
+custom_styles/fg = SubResource( 2 )
+custom_styles/bg = SubResource( 3 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+value = 100.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy" type="Sprite" parent="Camera/CanvasLayer"]
+modulate = Color( 1, 0, 0, 0.670588 )
+texture = ExtResource( 2 )
+
+[node name="Position3D" type="Position3D" parent="Camera"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 4 )
+pitch_scale = 5.0
