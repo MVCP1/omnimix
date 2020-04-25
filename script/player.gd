@@ -1,6 +1,4 @@
 extends KinematicBody
- 
-var NOJO = 0
 
 const SPEED = 8
 const JUMP_FORCE = 10
@@ -11,7 +9,7 @@ const SENSITIVITY = -0.001
 const ANGLE = 80
  
 const AIR_CONTROL = 0.05
-const RUNNING_MULTIPLIER = 1.5*2
+const RUNNING_MULTIPLIER = 1.5*8
 const AIR_FRICTION = 0.5
 
 var y_vel = 0
@@ -20,12 +18,13 @@ var inertia = Vector3()
 
 puppet var repl_position = Transform()
 
-
 puppet var life = 100
 
 
 func _ready():
 	add_to_group("player")
+	randomize()
+	$Healthbar.texture = $Healthbar/Viewport.get_texture()
 	#HIDE MOUSE CURSOR
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	pass
@@ -45,6 +44,8 @@ func set_dominant_color(color):
 
 remotesync func damage(value):
 	life = life-value
+	if not (is_network_master()):
+		$Healthbar.visible = true
 	pass
 
 remotesync func shoot(who, loc, front, rot, parent):
@@ -64,10 +65,10 @@ func _physics_process(delta):
 		#SETS THE CURRENT CAMERA
 		$Camera.set_current(true)
 		
-		
 		#ESC KEY QUITS THE GAME
 		if Input.is_action_just_pressed("esc"):
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			#get_tree().change_scene("res://scenes/main_menu.tscn")
 			get_tree().quit()
 		
 		
@@ -183,8 +184,10 @@ func _physics_process(delta):
 			$Camera/CanvasLayer/Sprite7.set_modulate(Color(0,1,0,1))
 		else:
 			$Camera/CanvasLayer/Sprite7.set_modulate(Color(1,0,0,1))
-		$Camera/CanvasLayer/enemy.position = $Camera.unproject_position(get_parent().get_node("KinematicBody").global_transform.origin)
-		
+		#ENEMY INFORMATION
+		if not $Camera.is_position_behind(get_parent().get_node("Walls").get_node("KinematicBody").global_transform.origin):
+			$Camera/CanvasLayer/enemy.position = $Camera.unproject_position(get_parent().get_node("Walls").get_node("KinematicBody").global_transform.origin)
+		$Camera/CanvasLayer/enemy.visible = not $Camera.is_position_behind(get_parent().get_node("Walls").get_node("KinematicBody").global_transform.origin)
 		
 		# Replicate the position
 		rset("repl_position", transform)
@@ -194,5 +197,13 @@ func _physics_process(delta):
 		transform = repl_position
 	
 	#INDEPENDENT PLAYER PROCESSES:
+	
+	#DYING
+	if life <= 0:
+		translation = get_parent().get_node("SpawnPoints").get_node(str(randi() % 16 + 1)).translation
+		life = 100
+	
+	#SETTING LIFE
 	if (get_tree().is_network_server()):
 		rset("life", life)
+	$Healthbar/Viewport/Health.value = life

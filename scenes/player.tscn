@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://script/player.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -8,10 +8,15 @@
 [sub_resource type="CapsuleShape" id=1]
 height = 0.826801
 
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.2, 0.854902, 0.105882, 1 )
+[sub_resource type="SpatialMaterial" id=2]
+flags_transparent = true
+flags_unshaded = true
+params_billboard_mode = 1
 
 [sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.2, 0.854902, 0.105882, 1 )
+
+[sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.560784, 0.560784, 0.560784, 1 )
 
 [node name="player" type="KinematicBody"]
@@ -26,6 +31,29 @@ cast_to = Vector3( 0, -1.5, 0 )
 transform = Transform( -4.37114e-08, -1, 4.37114e-08, 3.82137e-15, 4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0, 0, 0 )
 shape = SubResource( 1 )
 
+[node name="Healthbar" type="Sprite3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0 )
+visible = false
+material_override = SubResource( 2 )
+texture = ExtResource( 2 )
+
+[node name="Viewport" type="Viewport" parent="Healthbar"]
+size = Vector2( 100, 30 )
+transparent_bg = true
+usage = 0
+render_target_v_flip = true
+
+[node name="Health" type="ProgressBar" parent="Healthbar/Viewport"]
+margin_right = 100.0
+margin_bottom = 30.0
+custom_styles/fg = SubResource( 3 )
+custom_styles/bg = SubResource( 4 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+value = 100.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="icon" type="CSGCylinder" parent="."]
 radius = 0.657496
 height = 2.26025
@@ -36,6 +64,7 @@ texture = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+far = 500.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera"]
 
@@ -190,8 +219,8 @@ margin_left = 889.39
 margin_top = 546.736
 margin_right = 996.39
 margin_bottom = 576.736
-custom_styles/fg = SubResource( 2 )
-custom_styles/bg = SubResource( 3 )
+custom_styles/fg = SubResource( 3 )
+custom_styles/bg = SubResource( 4 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 value = 100.0
 __meta__ = {

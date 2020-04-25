@@ -1,7 +1,9 @@
 [gd_resource type="Environment" load_steps=2 format=2]
 
 [sub_resource type="ProceduralSky" id=1]
+ground_curve = 0.0360501
 
 [resource]
 background_mode = 2
 background_sky = SubResource( 1 )
+ss_reflections_enabled = true
