@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/cactus03.obj-17471ba40d014aa24047a6f9fd8a05b0.mesh"
+
+[deps]
+
+files=[ "res://.import/cactus03.obj-17471ba40d014aa24047a6f9fd8a05b0.mesh" ]
+
+source_file="res://objects/PolyDesert/cactus03.obj"
+dest_files=[ "res://.import/cactus03.obj-17471ba40d014aa24047a6f9fd8a05b0.mesh", "res://.import/cactus03.obj-17471ba40d014aa24047a6f9fd8a05b0.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

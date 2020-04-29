@@ -15,7 +15,6 @@ const AIR_FRICTION = 0.5
 var y_vel = 0
 var inertia = Vector3()
 
-
 puppet var repl_position = Transform()
 
 puppet var life = 100
@@ -71,13 +70,28 @@ func _physics_process(delta):
 			#get_tree().change_scene("res://scenes/main_menu.tscn")
 			get_tree().quit()
 		
+		#SUICIDE
+		if Input.is_action_just_pressed("k"):
+			rpc("damage", 200)
 		
 		#SHOOTS BULLET
 		if Input.is_action_just_pressed("mouse_left"):
 			rpc("shoot", name, $Camera.global_transform.origin, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized(), rotation + Vector3(PI,0,0) + Vector3(0,0,$Camera.rotation.z), get_parent())
 			$AudioStreamPlayer.play()
 			pass
-		
+		#SHOOTS RAYCAST
+		if Input.is_action_just_pressed("mouse_right"):
+			$Camera/Test.force_raycast_update()
+			if $Camera/Test.is_colliding():
+				if $Camera/Test.get_collider().is_in_group("player"):
+					$Camera/Test.get_collider().rpc("damage", 10)
+				print($Camera/Test.get_collider())
+				var eclass = load("res://scenes/explosion.tscn")
+				var eactor = eclass.instance()
+				eactor.global_translate($Camera/Test.get_collision_point())
+				get_parent().add_child(eactor)
+				$AudioStreamPlayer.play()
+			pass
 		
 		#FLOOR CHECK
 		get_node("RayCast_floor").force_raycast_update()
@@ -185,9 +199,9 @@ func _physics_process(delta):
 		else:
 			$Camera/CanvasLayer/Sprite7.set_modulate(Color(1,0,0,1))
 		#ENEMY INFORMATION
-		if not $Camera.is_position_behind(get_parent().get_node("Walls").get_node("KinematicBody").global_transform.origin):
-			$Camera/CanvasLayer/enemy.position = $Camera.unproject_position(get_parent().get_node("Walls").get_node("KinematicBody").global_transform.origin)
-		$Camera/CanvasLayer/enemy.visible = not $Camera.is_position_behind(get_parent().get_node("Walls").get_node("KinematicBody").global_transform.origin)
+		if not $Camera.is_position_behind(get_parent().get_node("TestMap").get_node("Walls").get_node("KinematicBody").global_transform.origin):
+			$Camera/CanvasLayer/enemy.position = $Camera.unproject_position(get_parent().get_node("TestMap").get_node("Walls").get_node("KinematicBody").global_transform.origin)
+		$Camera/CanvasLayer/enemy.visible = not $Camera.is_position_behind(get_parent().get_node("TestMap").get_node("Walls").get_node("KinematicBody").global_transform.origin)
 		
 		# Replicate the position
 		rset("repl_position", transform)
@@ -200,7 +214,10 @@ func _physics_process(delta):
 	
 	#DYING
 	if life <= 0:
-		translation = get_parent().get_node("SpawnPoints").get_node(str(randi() % 16 + 1)).translation
+		if is_in_group("teamA"):
+			translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
+		if is_in_group("teamB"):
+			translation = get_parent().get_node("SpawnPoints").get_node("TeamB").get_node(str(randi() % 5 + 1)).global_transform.origin
 		life = 100
 	
 	#SETTING LIFE

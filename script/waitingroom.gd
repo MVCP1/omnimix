@@ -25,7 +25,7 @@ func _input(event):
 				readyA = (i != null) and readyA
 			for i in teamB:
 				readyB = (i != null) and readyB
-			if readyA and not readyB:
+			if readyA and readyB:
 				rset("ready", true)
 				rpc("gates")
 
@@ -39,10 +39,16 @@ remotesync func gates():
 func _on_Timer_timeout():
 	$Countdown.stop()
 	$Begin.play()
+	var n = 0
 	for i in teamA:
-		i.global_transform.origin = Vector3(0,0,0)
-	#for i in teamB:
-		#i.global_transform.origin = Vector3(0,0,0)
+		n += 1
+		i.global_transform.origin = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(n)).global_transform.origin
+		i.add_to_group("teamA")
+	n = 0
+	for i in teamB:
+		n += 1
+		i.global_transform.origin = get_parent().get_node("SpawnPoints").get_node("TeamB").get_node(str(n)).global_transform.origin
+		i.add_to_group("teamB")
 	pass # Replace with function body.
 
 

@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/rock05.obj-e327220146d11d30814b6f66ba50a99f.mesh"
+
+[deps]
+
+files=[ "res://.import/rock05.obj-e327220146d11d30814b6f66ba50a99f.mesh" ]
+
+source_file="res://objects/PolyDesert/rock05.obj"
+dest_files=[ "res://.import/rock05.obj-e327220146d11d30814b6f66ba50a99f.mesh", "res://.import/rock05.obj-e327220146d11d30814b6f66ba50a99f.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
