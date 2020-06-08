@@ -1,0 +1,76 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://sample/explosion.wav" type="AudioStream" id=1]
+
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0, 0.638889, 1 )
+colors = PoolColorArray( 1, 0, 0, 1, 0.959961, 1, 0, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="Curve" id=3]
+_data = [ Vector2( 0, 0.970455 ), 0.0, 0.0, 0, 0, Vector2( 0.496183, 0.215909 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=4]
+curve = SubResource( 3 )
+
+[sub_resource type="ParticlesMaterial" id=5]
+direction = Vector3( 0, 0, 0 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 100.0
+scale_curve = SubResource( 4 )
+color_ramp = SubResource( 2 )
+
+[sub_resource type="SpatialMaterial" id=6]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id=7]
+material = SubResource( 6 )
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends Particles
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	emitting = true
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+
+func _on_AudioStreamPlayer3D_finished():
+	queue_free()
+	pass # Replace with function body.
+"
+
+[node name="Spatial" type="Spatial"]
+
+[node name="P" type="Particles" parent="."]
+transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
+cast_shadow = 0
+emitting = false
+amount = 20
+lifetime = 0.25
+one_shot = true
+explosiveness = 1.0
+draw_order = 1
+process_material = SubResource( 5 )
+draw_pass_1 = SubResource( 7 )
+script = SubResource( 8 )
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="P"]
+stream = ExtResource( 1 )
+autoplay = true
+[connection signal="finished" from="P/AudioStreamPlayer3D" to="P" method="_on_AudioStreamPlayer3D_finished"]

@@ -24,12 +24,18 @@ func _ready():
 	add_to_group("player")
 	randomize()
 	$Healthbar.texture = $Healthbar/Viewport.get_texture()
+	#HIDDING SELF SKIN
+	if self.name == str(gamestate.player_info.net_id):
+		get_node("skin").visible = false
+	#HIDDING OTHER PLAYER'S INTERFACE
+	if not (is_network_master()):
+		$Camera/CanvasLayer/Control.visible = false
 	#HIDE MOUSE CURSOR
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	pass
 
 func _input(event):
-	if (is_network_master()):
+	if (is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		#CAMERA ROTATION
 		if event is InputEventMouseMotion:
 			set_rotation(get_rotation() + Vector3(0,event.relative.x * SENSITIVITY, 0))
@@ -40,6 +46,7 @@ func set_dominant_color(color):
 	var material = SpatialMaterial.new()
 	material.albedo_color = color
 	$icon.material = material
+	$skin.material_override = material
 
 remotesync func damage(value):
 	life = life-value
@@ -47,19 +54,32 @@ remotesync func damage(value):
 		$Healthbar.visible = true
 	pass
 
-remotesync func shoot(who, loc, front, rot, parent):
+remotesync func shoot(who, loc, rot, team):
 	var bclass = load("res://scenes/bullet.tscn")
 	var bactor = bclass.instance()
 	bactor.dad = who
 	bactor.global_translate(loc)
-	bactor.front = front
+	bactor.rotation = rot
+	bactor.add_to_group("team"+team)
+	get_parent().add_child(bactor)
+	pass
+
+remotesync func hitscan(point, loc, rot):
+	var eclass = load("res://particles/explosion.tscn")
+	var eactor = eclass.instance()
+	eactor.global_translate(point)
+	get_parent().add_child(eactor)
+	var bclass = load("res://particles/beam.tscn")
+	var bactor = bclass.instance()
+	bactor.global_translate(loc + ((point-loc)*0.5))
+	bactor.scale.z = loc.distance_to(point)
 	bactor.rotation = rot
 	get_parent().add_child(bactor)
 	pass
 
+
 func _physics_process(delta):
-	if (is_network_master()):
-		$Camera/CanvasLayer.layer = 2
+	if (is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		
 		#SETS THE CURRENT CAMERA
 		$Camera.set_current(true)
@@ -73,23 +93,34 @@ func _physics_process(delta):
 		#SUICIDE
 		if Input.is_action_just_pressed("k"):
 			rpc("damage", 200)
+		#CHANGE TEAM
+		if Input.is_action_just_pressed("t"):
+			if(is_in_group("teamA")):
+				remove_from_group("teamA")
+				add_to_group("teamB")
+			elif(is_in_group("teamB")):
+				remove_from_group("teamB")
+				add_to_group("teamA")
+		
 		
 		#SHOOTS BULLET
 		if Input.is_action_just_pressed("mouse_left"):
-			rpc("shoot", name, $Camera.global_transform.origin, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized(), rotation + Vector3(PI,0,0) + Vector3(0,0,$Camera.rotation.z), get_parent())
+			var team = "N"
+			if(is_in_group("teamA")):
+				team = "A"
+			elif(is_in_group("teamB")):
+				team = "B" 
+			rpc("shoot", name, $Camera.global_transform.origin, $Camera.global_transform.basis.get_euler(), team)#, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized())
 			$AudioStreamPlayer.play()
 			pass
 		#SHOOTS RAYCAST
 		if Input.is_action_just_pressed("mouse_right"):
 			$Camera/Test.force_raycast_update()
 			if $Camera/Test.is_colliding():
+				rpc("hitscan", $Camera/Test.get_collision_point(), $Camera/Test.global_transform.origin, $Camera.global_transform.basis.get_euler())
 				if $Camera/Test.get_collider().is_in_group("player"):
-					$Camera/Test.get_collider().rpc("damage", 10)
-				print($Camera/Test.get_collider())
-				var eclass = load("res://scenes/explosion.tscn")
-				var eactor = eclass.instance()
-				eactor.global_translate($Camera/Test.get_collision_point())
-				get_parent().add_child(eactor)
+					if(is_in_group("teamA") and $Camera/Test.get_collider().is_in_group("teamB")) or (is_in_group("teamB") and $Camera/Test.get_collider().is_in_group("teamA")):
+						$Camera/Test.get_collider().rpc("damage", 10)
 				$AudioStreamPlayer.play()
 			pass
 		
@@ -165,43 +196,43 @@ func _physics_process(delta):
 		
 	#DEBUG INFORMATION
 		#MOVEMENT VECTOR
-		$Camera/CanvasLayer/RichTextLabel3.text = String(move)
+		$Camera/CanvasLayer/Control/RichTextLabel3.text = String(move)
 		#INERTIA VECTOR
-		$Camera/CanvasLayer/RichTextLabel7.text = String(inertia)
+		$Camera/CanvasLayer/Control/RichTextLabel7.text = String(inertia)
 		#LIFE INFORMATION
-		$Camera/CanvasLayer/ProgressBar.value = life
+		$Camera/CanvasLayer/Control/ProgressBar.value = life
 		#ON FLOOR (3x)
 		if is_on_floor():
-			$Camera/CanvasLayer/Sprite3.set_modulate(Color(0,1,0,1))
+			$Camera/CanvasLayer/Control/Sprite3.set_modulate(Color(0,1,0,1))
 		else:
-			$Camera/CanvasLayer/Sprite3.set_modulate(Color(1,0,0,1))
+			$Camera/CanvasLayer/Control/Sprite3.set_modulate(Color(1,0,0,1))
 		if get_node("RayCast_floor").is_colliding():
-			$Camera/CanvasLayer/Sprite5.set_modulate(Color(0,1,0,1))
+			$Camera/CanvasLayer/Control/Sprite5.set_modulate(Color(0,1,0,1))
 		else:
-			$Camera/CanvasLayer/Sprite5.set_modulate(Color(1,0,0,1))
+			$Camera/CanvasLayer/Control/Sprite5.set_modulate(Color(1,0,0,1))
 		if on_floor:
-			$Camera/CanvasLayer/Sprite6.set_modulate(Color(0,1,0,1))
+			$Camera/CanvasLayer/Control/Sprite6.set_modulate(Color(0,1,0,1))
 		else:
-			$Camera/CanvasLayer/Sprite6.set_modulate(Color(1,0,0,1))
+			$Camera/CanvasLayer/Control/Sprite6.set_modulate(Color(1,0,0,1))
 		#ON CEILING
 		if is_on_ceiling():
-			$Camera/CanvasLayer/Sprite4.set_modulate(Color(0,1,0,1))
+			$Camera/CanvasLayer/Control/Sprite4.set_modulate(Color(0,1,0,1))
 		else:
-			$Camera/CanvasLayer/Sprite4.set_modulate(Color(1,0,0,1))
+			$Camera/CanvasLayer/Control/Sprite4.set_modulate(Color(1,0,0,1))
 		#FALLING
 		if !on_floor and y_vel < 0:
-			$Camera/CanvasLayer/Sprite2.set_modulate(Color(0,1,0,1))
+			$Camera/CanvasLayer/Control/Sprite2.set_modulate(Color(0,1,0,1))
 		else:
-			$Camera/CanvasLayer/Sprite2.set_modulate(Color(1,0,0,1))
+			$Camera/CanvasLayer/Control/Sprite2.set_modulate(Color(1,0,0,1))
 		#ON WALL
 		if is_on_wall():
-			$Camera/CanvasLayer/Sprite7.set_modulate(Color(0,1,0,1))
+			$Camera/CanvasLayer/Control/Sprite7.set_modulate(Color(0,1,0,1))
 		else:
-			$Camera/CanvasLayer/Sprite7.set_modulate(Color(1,0,0,1))
+			$Camera/CanvasLayer/Control/Sprite7.set_modulate(Color(1,0,0,1))
 		#ENEMY INFORMATION
-		if not $Camera.is_position_behind(get_parent().get_node("TestMap").get_node("Walls").get_node("KinematicBody").global_transform.origin):
-			$Camera/CanvasLayer/enemy.position = $Camera.unproject_position(get_parent().get_node("TestMap").get_node("Walls").get_node("KinematicBody").global_transform.origin)
-		$Camera/CanvasLayer/enemy.visible = not $Camera.is_position_behind(get_parent().get_node("TestMap").get_node("Walls").get_node("KinematicBody").global_transform.origin)
+		if not $Camera.is_position_behind(get_parent().get_node("Desert").get_node("Point").get_node("Icon").global_transform.origin):
+			$Camera/CanvasLayer/Control/enemy.position = $Camera.unproject_position(get_parent().get_node("Desert").get_node("Point").get_node("Icon").global_transform.origin)
+		$Camera/CanvasLayer/Control/enemy.visible = not $Camera.is_position_behind(get_parent().get_node("Desert").get_node("Point").get_node("Icon").global_transform.origin)
 		
 		# Replicate the position
 		rset("repl_position", transform)
@@ -216,8 +247,11 @@ func _physics_process(delta):
 	if life <= 0:
 		if is_in_group("teamA"):
 			translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
-		if is_in_group("teamB"):
+		elif is_in_group("teamB"):
 			translation = get_parent().get_node("SpawnPoints").get_node("TeamB").get_node(str(randi() % 5 + 1)).global_transform.origin
+		else:
+			add_to_group("teamA")
+			translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
 		life = 100
 	
 	#SETTING LIFE

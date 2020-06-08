@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Hill_desert_001.obj-28cc6d558f26b1ff7d2cbfe704eb53a9.mesh"
+
+[deps]
+
+files=[ "res://.import/Hill_desert_001.obj-28cc6d558f26b1ff7d2cbfe704eb53a9.mesh" ]
+
+source_file="res://objects/DesertRocks/Hill_desert_001.obj"
+dest_files=[ "res://.import/Hill_desert_001.obj-28cc6d558f26b1ff7d2cbfe704eb53a9.mesh", "res://.import/Hill_desert_001.obj-28cc6d558f26b1ff7d2cbfe704eb53a9.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

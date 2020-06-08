@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Desert_plant_001.obj-181eae5909d7091e53b891bec098bf5c.mesh"
+
+[deps]
+
+files=[ "res://.import/Desert_plant_001.obj-181eae5909d7091e53b891bec098bf5c.mesh" ]
+
+source_file="res://objects/DesertPlants/Desert_plant_001.obj"
+dest_files=[ "res://.import/Desert_plant_001.obj-181eae5909d7091e53b891bec098bf5c.mesh", "res://.import/Desert_plant_001.obj-181eae5909d7091e53b891bec098bf5c.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

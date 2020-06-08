@@ -40,15 +40,28 @@ func _on_Timer_timeout():
 	$Countdown.stop()
 	$Begin.play()
 	var n = 0
+	var team = "N"
 	for i in teamA:
 		n += 1
 		i.global_transform.origin = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(n)).global_transform.origin
 		i.add_to_group("teamA")
+		if i.name == str(gamestate.player_info.net_id):
+			team = "A"
 	n = 0
 	for i in teamB:
 		n += 1
 		i.global_transform.origin = get_parent().get_node("SpawnPoints").get_node("TeamB").get_node(str(n)).global_transform.origin
 		i.add_to_group("teamB")
+		if i.name == str(gamestate.player_info.net_id):
+			team = "B"
+	
+	#ADDING ENEMIES OUTLINE
+	if team == "A":
+		for i in teamB:
+			i.get_node("skin").get_node("outline").visible = true
+	elif team == "B":
+		for i in teamA:
+			i.get_node("skin").get_node("outline").visible = true
 	pass # Replace with function body.
 
 

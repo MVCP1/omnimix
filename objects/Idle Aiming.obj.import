@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Idle Aiming.obj-8e522c1e3dd2be3a28977dbc9eb05fd2.mesh"
+
+[deps]
+
+files=[ "res://.import/Idle Aiming.obj-8e522c1e3dd2be3a28977dbc9eb05fd2.mesh" ]
+
+source_file="res://objects/Idle Aiming.obj"
+dest_files=[ "res://.import/Idle Aiming.obj-8e522c1e3dd2be3a28977dbc9eb05fd2.mesh", "res://.import/Idle Aiming.obj-8e522c1e3dd2be3a28977dbc9eb05fd2.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
