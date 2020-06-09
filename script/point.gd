@@ -83,14 +83,14 @@ func _on_Timer_timeout():
 	if not won:
 		if (get_tree().is_network_server()):
 			if capturing and not contesting:
-				cap += 10
+				cap += 2#1
 			if not capturing and not contesting and cap > 0:
-				cap -= 10
+				cap -= 2#1
 			if not((cap > 0 or contesting) and ((team == "A") and (percentA + 100 >= 1000) or (team == "B") and (percentB + 100 >= 1000))):
 				if team == "A":
-					percentA = percentA + 100
+					percentA = percentA + 1
 				if team == "B":
-					percentB = percentB + 100
+					percentB = percentB + 1
 		if (get_tree().is_network_server()):
 			rset("percentA", percentA)
 			rset("percentB", percentB)

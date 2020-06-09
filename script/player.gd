@@ -19,6 +19,10 @@ puppet var repl_position = Transform()
 
 puppet var life = 100
 
+var e = 100
+var shift = 100
+var g = 100
+
 
 func _ready():
 	add_to_group("player")
@@ -77,6 +81,25 @@ remotesync func hitscan(point, loc, rot):
 	get_parent().add_child(bactor)
 	pass
 
+remotesync func bomb(who, loc, rot, team):
+	var bclass = load("res://scenes/bomb.tscn")
+	var bactor = bclass.instance()
+	bactor.dad = who
+	bactor.global_translate(loc)
+	bactor.rotation = rot
+	bactor.add_to_group("team"+team)
+	get_parent().add_child(bactor)
+	pass
+
+remotesync func bazuca(who, loc, rot, team):
+	var bclass = load("res://scenes/bazuca.tscn")
+	var bactor = bclass.instance()
+	bactor.dad = who
+	bactor.global_translate(loc)
+	bactor.rotation = rot
+	bactor.add_to_group("team"+team)
+	get_parent().add_child(bactor)
+	pass
 
 func _physics_process(delta):
 	if (is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -124,6 +147,42 @@ func _physics_process(delta):
 				$AudioStreamPlayer.play()
 			pass
 		
+		if Input.is_action_just_pressed("shift"):
+			if shift == 100:
+				shift = 0
+				$Camera/Test.force_raycast_update()
+				if $Camera/Test.is_colliding():
+					rpc("hitscan", $Camera/Test.get_collision_point(), $Camera/Test.global_transform.origin, $Camera.global_transform.basis.get_euler())
+					if $Camera/Test.get_collider().is_in_group("player"):
+						if(is_in_group("teamA") and $Camera/Test.get_collider().is_in_group("teamB")) or (is_in_group("teamB") and $Camera/Test.get_collider().is_in_group("teamA")):
+							$Camera/Test.get_collider().rpc("damage", 30)
+					$AudioStreamPlayer.play()
+			pass
+		
+		if Input.is_action_just_pressed("e"):
+			if e == 100:
+				e = 0
+				var team = "N"
+				if(is_in_group("teamA")):
+					team = "A"
+				elif(is_in_group("teamB")):
+					team = "B" 
+				rpc("bomb", name, $Camera/Position3D.global_transform.origin, $Camera.global_transform.basis.get_euler(), team)#, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized())
+				$AudioStreamPlayer.play()
+			pass
+		
+		if Input.is_action_just_pressed("g"):
+			if g == 100:
+				g = 0
+				var team = "N"
+				if(is_in_group("teamA")):
+					team = "A"
+				elif(is_in_group("teamB")):
+					team = "B" 
+				rpc("bazuca", name, $Camera.global_transform.origin, $Camera.global_transform.basis.get_euler(), team)#, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized())
+				$AudioStreamPlayer.play()
+			pass
+		
 		#FLOOR CHECK
 		get_node("RayCast_floor").force_raycast_update()
 		var on_floor = is_on_floor() or get_node("RayCast_floor").is_colliding()
@@ -145,8 +204,8 @@ func _physics_process(delta):
 		move *= SPEED
 		
 		#RUNNING
-		if Input.is_action_pressed("shift"):
-			move *= RUNNING_MULTIPLIER
+		#if Input.is_action_pressed("shift"):
+		#	move *= RUNNING_MULTIPLIER
 		
 		#ADDING GRAVITY
 		move.y = y_vel
@@ -195,6 +254,11 @@ func _physics_process(delta):
 		
 		
 	#DEBUG INFORMATION
+		#HABILITIES
+		$Camera/CanvasLayer/Control/Shift.value = shift
+		$Camera/CanvasLayer/Control/E.value = e
+		$Camera/CanvasLayer/Control/G.value = g
+		
 		#MOVEMENT VECTOR
 		$Camera/CanvasLayer/Control/RichTextLabel3.text = String(move)
 		#INERTIA VECTOR
@@ -258,3 +322,14 @@ func _physics_process(delta):
 	if (get_tree().is_network_server()):
 		rset("life", life)
 	$Healthbar/Viewport/Health.value = life
+
+
+func _on_Timer_timeout():
+	shift = clamp(shift+20, 0, 100)
+	e = clamp(e+10, 0, 100)
+	g = clamp(g+2, 0, 100)
+	if false:
+		shift = 100
+		e = 100
+		g = 100
+	pass # Replace with function body.

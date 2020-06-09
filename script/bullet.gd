@@ -2,7 +2,7 @@ extends Area
 
 
 var speed  = 1
-var damage  = 1
+var damage  = 10
 var dad
 var team = "N"
 
@@ -39,7 +39,7 @@ func hit(it):
 		if it.is_in_group("player"):
 			if(is_in_group("teamA") and it.is_in_group("teamB")) or (is_in_group("teamB") and it.is_in_group("teamA")):
 				if (get_tree().is_network_server()):
-					it.rpc("damage", 10)
+					it.rpc("damage", damage)
 		var eclass = load("res://particles/explosion.tscn")
 		var eactor = eclass.instance()
 		eactor.global_translate(global_transform.origin)
