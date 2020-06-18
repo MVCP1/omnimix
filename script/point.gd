@@ -86,7 +86,7 @@ func _on_Timer_timeout():
 				cap += 2#1
 			if not capturing and not contesting and cap > 0:
 				cap -= 2#1
-			if not((cap > 0 or contesting) and ((team == "A") and (percentA + 100 >= 1000) or (team == "B") and (percentB + 100 >= 1000))):
+			if not((cap > 0 or contesting) and ((team == "A") and (percentA + 1 >= 1000) or (team == "B") and (percentB + 1 >= 1000))):
 				if team == "A":
 					percentA = percentA + 1
 				if team == "B":

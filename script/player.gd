@@ -19,15 +19,22 @@ puppet var repl_position = Transform()
 
 puppet var life = 100
 
+
 var e = 100
 var shift = 100
 var g = 100
+
+var god_mode = false
+
 
 
 func _ready():
 	add_to_group("player")
 	randomize()
 	$Healthbar.texture = $Healthbar/Viewport.get_texture()
+	$Camera/Test.add_exception(self)
+	#ADD POWERS
+	$Power.set_script(load("res://script/powers/blank.gd"))
 	#HIDDING SELF SKIN
 	if self.name == str(gamestate.player_info.net_id):
 		get_node("skin").visible = false
@@ -58,49 +65,6 @@ remotesync func damage(value):
 		$Healthbar.visible = true
 	pass
 
-remotesync func shoot(who, loc, rot, team):
-	var bclass = load("res://scenes/bullet.tscn")
-	var bactor = bclass.instance()
-	bactor.dad = who
-	bactor.global_translate(loc)
-	bactor.rotation = rot
-	bactor.add_to_group("team"+team)
-	get_parent().add_child(bactor)
-	pass
-
-remotesync func hitscan(point, loc, rot):
-	var eclass = load("res://particles/explosion.tscn")
-	var eactor = eclass.instance()
-	eactor.global_translate(point)
-	get_parent().add_child(eactor)
-	var bclass = load("res://particles/beam.tscn")
-	var bactor = bclass.instance()
-	bactor.global_translate(loc + ((point-loc)*0.5))
-	bactor.scale.z = loc.distance_to(point)
-	bactor.rotation = rot
-	get_parent().add_child(bactor)
-	pass
-
-remotesync func bomb(who, loc, rot, team):
-	var bclass = load("res://scenes/bomb.tscn")
-	var bactor = bclass.instance()
-	bactor.dad = who
-	bactor.global_translate(loc)
-	bactor.rotation = rot
-	bactor.add_to_group("team"+team)
-	get_parent().add_child(bactor)
-	pass
-
-remotesync func bazuca(who, loc, rot, team):
-	var bclass = load("res://scenes/bazuca.tscn")
-	var bactor = bclass.instance()
-	bactor.dad = who
-	bactor.global_translate(loc)
-	bactor.rotation = rot
-	bactor.add_to_group("team"+team)
-	get_parent().add_child(bactor)
-	pass
-
 func _physics_process(delta):
 	if (is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		
@@ -126,62 +90,36 @@ func _physics_process(delta):
 				add_to_group("teamA")
 		
 		
-		#SHOOTS BULLET
+		#POWERS
+		
 		if Input.is_action_just_pressed("mouse_left"):
-			var team = "N"
-			if(is_in_group("teamA")):
-				team = "A"
-			elif(is_in_group("teamB")):
-				team = "B" 
-			rpc("shoot", name, $Camera.global_transform.origin, $Camera.global_transform.basis.get_euler(), team)#, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized())
-			$AudioStreamPlayer.play()
+			if true:
+				$Power.LMOUSE()
 			pass
-		#SHOOTS RAYCAST
+		
 		if Input.is_action_just_pressed("mouse_right"):
-			$Camera/Test.force_raycast_update()
-			if $Camera/Test.is_colliding():
-				rpc("hitscan", $Camera/Test.get_collision_point(), $Camera/Test.global_transform.origin, $Camera.global_transform.basis.get_euler())
-				if $Camera/Test.get_collider().is_in_group("player"):
-					if(is_in_group("teamA") and $Camera/Test.get_collider().is_in_group("teamB")) or (is_in_group("teamB") and $Camera/Test.get_collider().is_in_group("teamA")):
-						$Camera/Test.get_collider().rpc("damage", 10)
-				$AudioStreamPlayer.play()
+			if true:
+				$Power.RMOUSE()
 			pass
 		
 		if Input.is_action_just_pressed("shift"):
 			if shift == 100:
 				shift = 0
-				$Camera/Test.force_raycast_update()
-				if $Camera/Test.is_colliding():
-					rpc("hitscan", $Camera/Test.get_collision_point(), $Camera/Test.global_transform.origin, $Camera.global_transform.basis.get_euler())
-					if $Camera/Test.get_collider().is_in_group("player"):
-						if(is_in_group("teamA") and $Camera/Test.get_collider().is_in_group("teamB")) or (is_in_group("teamB") and $Camera/Test.get_collider().is_in_group("teamA")):
-							$Camera/Test.get_collider().rpc("damage", 30)
-					$AudioStreamPlayer.play()
+				$Power.SHIFT()
 			pass
 		
 		if Input.is_action_just_pressed("e"):
 			if e == 100:
 				e = 0
-				var team = "N"
-				if(is_in_group("teamA")):
-					team = "A"
-				elif(is_in_group("teamB")):
-					team = "B" 
-				rpc("bomb", name, $Camera/Position3D.global_transform.origin, $Camera.global_transform.basis.get_euler(), team)#, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized())
-				$AudioStreamPlayer.play()
+				$Power.E()
 			pass
 		
 		if Input.is_action_just_pressed("g"):
 			if g == 100:
 				g = 0
-				var team = "N"
-				if(is_in_group("teamA")):
-					team = "A"
-				elif(is_in_group("teamB")):
-					team = "B" 
-				rpc("bazuca", name, $Camera.global_transform.origin, $Camera.global_transform.basis.get_euler(), team)#, ($Camera/Position3D.global_transform.origin - $Camera.global_transform.origin).normalized())
-				$AudioStreamPlayer.play()
+				$Power.G()
 			pass
+		
 		
 		#FLOOR CHECK
 		get_node("RayCast_floor").force_raycast_update()
@@ -325,11 +263,12 @@ func _physics_process(delta):
 
 
 func _on_Timer_timeout():
-	shift = clamp(shift+20, 0, 100)
-	e = clamp(e+10, 0, 100)
-	g = clamp(g+2, 0, 100)
-	if false:
-		shift = 100
-		e = 100
-		g = 100
+	if $Power.get_script() != null:
+		shift = clamp(shift+(100/$Power.waitS), 0, 100)
+		e = clamp(e+(100/$Power.waitE), 0, 100)
+		g = clamp(g+(100/$Power.waitG), 0, 100)
+		if god_mode:
+			shift = 100
+			e = 100
+			g = 100
 	pass # Replace with function body.

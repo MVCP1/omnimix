@@ -21,7 +21,6 @@ config/icon="res://icon.png"
 
 [autoload]
 
-game="*res://script/game.gd"
 gamestate="*res://script/gamestate.gd"
 network="*res://script/network.gd"
 
