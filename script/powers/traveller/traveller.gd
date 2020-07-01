@@ -12,11 +12,11 @@ var E = 0
 var G = 0
 
 
-var waitL = 1
+var waitL = 1.5
 var waitR = 0.2
 
-var waitS = 7
-var waitE = 2#4
+var waitS = 5
+var waitE = 15
 var waitG = 60
 
 var wind = false
@@ -59,14 +59,13 @@ func _process(delta):
 	
 	dad.confirm = wind
 	if wind:
-		dad.get_node("Camera").get_node("Test").force_raycast_update()
-		if dad.get_node("Camera").get_node("Test").is_colliding():
+		if dad.get_node("Camera").get_node("Test").make_test(100, 0, 1):
 			get_node("wind_fade").visible = true
-			get_node("wind_fade").global_transform.origin = dad.get_node("Camera").get_node("Test").get_collision_point()
-			if not dad.get_node("Camera").get_node("Test").get_collision_normal().y == 1:
-				get_node("wind_fade").get_child(0).material.set_albedo(Color(1,0,0,0.1))
-			else:
+			get_node("wind_fade").global_transform.origin = dad.get_node("Camera").get_node("Test").point[0]
+			if dad.get_node("Camera").get_node("Test").normal[0].y == 1:
 				get_node("wind_fade").get_child(0).material.set_albedo(Color(0,1,1,0.1))
+			else:
+				get_node("wind_fade").get_child(0).material.set_albedo(Color(1,0.5,0.5,0.1))
 		else:
 			get_node("wind_fade").visible = false
 	
@@ -116,12 +115,14 @@ func _init():
 func LMOUSE():
 	if mouseL >= waitL:
 		mouseL = 0
-		dad.get_node("Camera").get_node("Test").force_raycast_update()
-		if dad.get_node("Camera").get_node("Test").is_colliding():
-			rpc("hitscan", dad.get_node("Camera").get_node("Test").get_collision_point(), dad.get_node("Camera").get_node("Gun").global_transform.origin)
-			if dad.get_node("Camera").get_node("Test").get_collider().is_in_group("player"):
-				if(dad.is_in_group("teamA") and dad.get_node("Camera").get_node("Test").get_collider().is_in_group("teamB")) or (dad.is_in_group("teamB") and dad.get_node("Camera").get_node("Test").get_collider().is_in_group("teamA")):
-					dad.get_node("Camera").get_node("Test").get_collider().rpc("damage", 10)
+		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
+		for p in dad.get_node("Camera").get_node("Test").point:
+			rpc("hitscan", p, dad.get_node("Camera").get_node("Gun").global_transform.origin)
+		for b in dad.get_node("Camera").get_node("Test").body:
+			if b != null:
+				if b.is_in_group("player"):
+					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+						b.rpc("damage", 40)
 	pass
 
 func SHIFT():
@@ -147,6 +148,9 @@ func G():
 		dad.get_node("Camera").fov = 70
 		dad.SENSITIVITY = -0.001
 		dad.RUNNING_MULTIPLIER = 1
+		
+		dad.duration = ult_time
+		dad.duration_value = 100
 	pass
 
 func SPACE():

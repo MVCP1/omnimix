@@ -1,0 +1,89 @@
+[gd_scene load_steps=6 format=2]
+
+[sub_resource type="ParticlesMaterial" id=1]
+gravity = Vector3( 0, 0, 0 )
+
+[sub_resource type="SpatialMaterial" id=2]
+flags_transparent = true
+vertex_color_use_as_albedo = true
+albedo_color = Color( 1, 1, 0, 1 )
+emission_enabled = true
+emission = Color( 1, 1, 0, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="CylinderMesh" id=3]
+material = SubResource( 2 )
+top_radius = 0.5
+bottom_radius = 0.5
+height = 10.0
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Particles
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	emitting = true
+	get_parent().get_node(\"AnimationPlayer\").play(\"fade\")
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+
+func _on_Timer_timeout():
+	get_parent().queue_free()
+	pass # Replace with function body.
+"
+
+[sub_resource type="Animation" id=5]
+resource_name = "fade"
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("P:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 0.1, -0.25, 0, 0.25, 0, 0.03, -0.25, 0, 0.25, 0, 0.1, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 1 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath("P:scale:z")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 0.1, -0.25, 0, 0.25, 0, 0.03, -0.25, 0, 0.25, 0, 0.1, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 1 )
+}
+
+[node name="thunder" type="Spatial"]
+
+[node name="P" type="Particles" parent="."]
+transform = Transform( 2.6543e-15, 1.62921e-08, 0.1, 0.1, -1.62921e-08, 1.50348e-20, 1.62921e-08, 0.1, -1.62921e-08, 0, 0, 0 )
+cast_shadow = 0
+amount = 1
+draw_order = 1
+process_material = SubResource( 1 )
+draw_pass_1 = SubResource( 3 )
+script = SubResource( 4 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+autostart = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/fade = SubResource( 5 )
+[connection signal="timeout" from="Timer" to="P" method="_on_Timer_timeout"]

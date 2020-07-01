@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://script/choice.gd" type="Script" id=1]
+
+[node name="choice" type="CanvasLayer"]
+script = ExtResource( 1 )
+
+[node name="Control" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="confirm" type="Button" parent="Control"]
+margin_left = 466.965
+margin_top = 463.93
+margin_right = 566.965
+margin_bottom = 512.93
+text = "CONFIRM"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="blank" type="Button" parent="Control"]
+margin_left = 50.0
+margin_top = 350.0
+margin_right = 150.0
+margin_bottom = 400.0
+text = "BLANK"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="traveller" type="Button" parent="Control"]
+margin_left = 150.0
+margin_top = 350.0
+margin_right = 250.0
+margin_bottom = 400.0
+text = "TRAVELLER"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="kinematic" type="Button" parent="Control"]
+margin_left = 250.0
+margin_top = 350.0
+margin_right = 350.0
+margin_bottom = 400.0
+text = "KINEMATIC"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="button_down" from="Control/confirm" to="." method="_on_confirm_button_down"]
+[connection signal="button_down" from="Control/blank" to="." method="_on_blank_button_down"]
+[connection signal="button_down" from="Control/traveller" to="." method="_on_traveller_button_down"]
+[connection signal="button_down" from="Control/kinematic" to="." method="_on_kinematic_button_down"]

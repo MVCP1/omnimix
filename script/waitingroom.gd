@@ -47,6 +47,8 @@ func _on_Timer_timeout():
 		i.add_to_group("teamA")
 		if i.name == str(gamestate.player_info.net_id):
 			team = "A"
+			var choice = load("res://scenes/choice.tscn").instance()
+			i.add_child(choice)
 	n = 0
 	for i in teamB:
 		n += 1
@@ -54,6 +56,8 @@ func _on_Timer_timeout():
 		i.add_to_group("teamB")
 		if i.name == str(gamestate.player_info.net_id):
 			team = "B"
+			var choice = load("res://scenes/choice.tscn").instance()
+			i.add_child(choice)
 	
 	#ADDING ENEMIES OUTLINE
 	if team == "A":

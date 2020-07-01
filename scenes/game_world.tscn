@@ -1,4 +1,4 @@
-[gd_scene load_steps=119 format=2]
+[gd_scene load_steps=120 format=2]
 
 [ext_resource path="res://objects/Modular Temple/Prop_Vase_3.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/wall.tscn" type="PackedScene" id=2]
@@ -27,6 +27,7 @@
 [ext_resource path="res://sprites/sand_normal.jpg" type="Texture" id=25]
 [ext_resource path="res://sprites/rock_normal.jpg" type="Texture" id=26]
 [ext_resource path="res://desert_env.tres" type="Environment" id=27]
+[ext_resource path="res://scenes/dummy.tscn" type="PackedScene" id=28]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.282353, 0.729412, 0.458824, 1 )
@@ -887,7 +888,7 @@ transform = Transform( 0.984923, 0.00131905, -0.172987, 0.172987, -0.0151345, 0.
 light_energy = 1.5
 light_bake_mode = 2
 shadow_enabled = true
-shadow_color = Color( 0.678431, 0.533333, 0.176471, 1 )
+shadow_color = Color( 0.729412, 0.431373, 0.141176, 1 )
 directional_shadow_mode = 0
 
 [node name="BakedLightmap" type="BakedLightmap" parent="."]
@@ -1232,9 +1233,11 @@ one_shot = true
 
 [node name="Begin" type="AudioStreamPlayer" parent="WaitingRoom"]
 stream = ExtResource( 9 )
+volume_db = -10.0
 
 [node name="Countdown" type="AudioStreamPlayer" parent="WaitingRoom"]
 stream = ExtResource( 8 )
+volume_db = -10.0
 
 [node name="Desert" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11.2293, 0, 0 )
@@ -2621,6 +2624,21 @@ transform = Transform( 8.72565, 0, 0, 0, 10.0404, 0, 0, 0, 9.34653, 37.4833, 8.8
 
 [node name="wall8" parent="Desert/Walls/SideBOLD" instance=ExtResource( 2 )]
 transform = Transform( 8.72565, 0, 0, 0, 10.0404, 0, 0, 0, 9.34653, 34.8594, 8.86186, -37.8814 )
+
+[node name="dummy" parent="Desert" instance=ExtResource( 28 )]
+transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 16.4523, 2.02074, -9.67428 )
+
+[node name="dummy2" parent="Desert" instance=ExtResource( 28 )]
+transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -40.4404, 2.02074, -76.301 )
+
+[node name="dummy3" parent="Desert" instance=ExtResource( 28 )]
+transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -39.377, 2.02074, -75.3053 )
+
+[node name="dummy4" parent="Desert" instance=ExtResource( 28 )]
+transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -41.5472, 2.02074, -77.3373 )
+
+[node name="dummy5" parent="Desert" instance=ExtResource( 28 )]
+transform = Transform( 0.0328934, 0, -0.999459, 0, 1, 0, 0.999459, 0, 0.0328934, -16.2771, 2.02074, -62.5407 )
 [connection signal="body_entered" from="WaitingRoom/TeamA/Spot1/A1" to="WaitingRoom" method="_on_A1_body_entered"]
 [connection signal="body_exited" from="WaitingRoom/TeamA/Spot1/A1" to="WaitingRoom" method="_on_A1_body_exited"]
 [connection signal="body_entered" from="WaitingRoom/TeamB/Spot1/B1" to="WaitingRoom" method="_on_B1_body_entered"]

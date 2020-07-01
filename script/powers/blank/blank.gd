@@ -17,7 +17,7 @@ var waitR = 0.5
 
 var waitS = 8
 var waitE = 10
-var waitG = 50
+var waitG = 60
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -61,43 +61,51 @@ func _init():
 func LMOUSE():
 	if mouseL >= waitL:
 		mouseL = 0
-		dad.get_node("Camera").get_node("Test").force_raycast_update()
-		if dad.get_node("Camera").get_node("Test").is_colliding():
-			rpc("shoot", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, dad.get_node("Camera").get_node("Test").get_collision_point(), dad_team)
+		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
+		for p in dad.get_node("Camera").get_node("Test").point:
+			rpc("shoot", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team)
 	pass
 
 func RMOUSE():
 	if mouseR >= waitR:
 		mouseR = 0
-		dad.get_node("Camera").get_node("Test").force_raycast_update()
-		if dad.get_node("Camera").get_node("Test").is_colliding():
-			rpc("hitscan", dad.get_node("Camera").get_node("Test").get_collision_point(), dad.get_node("Camera").get_node("Gun").global_transform.origin)
-			if dad.get_node("Camera").get_node("Test").get_collider().is_in_group("player"):
-				if(dad.is_in_group("teamA") and dad.get_node("Camera").get_node("Test").get_collider().is_in_group("teamB")) or (dad.is_in_group("teamB") and dad.get_node("Camera").get_node("Test").get_collider().is_in_group("teamA")):
-					dad.get_node("Camera").get_node("Test").get_collider().rpc("damage", 10)
+		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
+		for p in dad.get_node("Camera").get_node("Test").point:
+			rpc("hitscan", p, dad.get_node("Camera").get_node("Gun").global_transform.origin)
+		for b in dad.get_node("Camera").get_node("Test").body:
+			if b != null:
+				if b.is_in_group("player"):
+					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+						b.rpc("damage", 10)
 	pass
 
 func SHIFT():
 	if S >= waitS:
 		S = 0
-		dad.get_node("Camera").get_node("Test").force_raycast_update()
-		if dad.get_node("Camera").get_node("Test").is_colliding():
-			rpc("hitscan", dad.get_node("Camera").get_node("Test").get_collision_point(), dad.get_node("Camera").get_node("Gun").global_transform.origin)
-			if dad.get_node("Camera").get_node("Test").get_collider().is_in_group("player"):
-				if(dad.is_in_group("teamA") and dad.get_node("Camera").get_node("Test").get_collider().is_in_group("teamB")) or (dad.is_in_group("teamB") and dad.get_node("Camera").get_node("Test").get_collider().is_in_group("teamA")):
-					dad.get_node("Camera").get_node("Test").get_collider().rpc("damage", 30)
+		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
+		for p in dad.get_node("Camera").get_node("Test").point:
+			rpc("hitscan", p, dad.get_node("Camera").get_node("Gun").global_transform.origin)
+		for b in dad.get_node("Camera").get_node("Test").body:
+			if b != null:
+				if b.is_in_group("player"):
+					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+						b.rpc("damage", 30)
 	pass
 
 func E():
 	if E >= waitE:
 		E = 0
-		rpc("bomb", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, dad.get_node("Camera").get_node("Test").get_collision_point(), dad_team)
+		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
+		for p in dad.get_node("Camera").get_node("Test").point:
+			rpc("bomb", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team)
 	pass
 
 func G():
 	if G >= waitG:
 		G = 0
-		rpc("bazuca", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, dad.get_node("Camera").get_node("Test").get_collision_point(), dad_team)
+		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
+		for p in dad.get_node("Camera").get_node("Test").point:
+			rpc("bazuca", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team)
 	pass
 
 
