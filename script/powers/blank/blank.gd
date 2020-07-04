@@ -4,6 +4,11 @@ extends Spatial
 var dad
 var dad_team = "N"
 
+const DAMAGE_MOUSEL = 10
+const DAMAGE_MOUSER = 10
+const DAMAGE_SHIFT = 40
+const DAMAGE_E = 30
+const DAMAGE_G = 50
 
 var mouseL = 0
 var mouseR = 0
@@ -21,6 +26,8 @@ var waitG = 60
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	dad = get_parent().get_parent()
+	set_process(true)
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -53,17 +60,12 @@ func _process(delta):
 			G()
 	pass
 
-func _init():
-	dad = get_parent()
-	set_process(true)
-	pass
-
 func LMOUSE():
 	if mouseL >= waitL:
 		mouseL = 0
 		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
 		for p in dad.get_node("Camera").get_node("Test").point:
-			rpc("shoot", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team)
+			rpc("shoot", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team, DAMAGE_MOUSEL*(1 + dad.power_up/200))
 	pass
 
 func RMOUSE():
@@ -76,7 +78,7 @@ func RMOUSE():
 			if b != null:
 				if b.is_in_group("player"):
 					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
-						b.rpc("damage", 10)
+						b.rpc("damage", DAMAGE_MOUSER*(1 + dad.power_up/200))
 	pass
 
 func SHIFT():
@@ -89,7 +91,7 @@ func SHIFT():
 			if b != null:
 				if b.is_in_group("player"):
 					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
-						b.rpc("damage", 30)
+						b.rpc("damage", DAMAGE_SHIFT*(1 + dad.power_up/200))
 	pass
 
 func E():
@@ -97,7 +99,7 @@ func E():
 		E = 0
 		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
 		for p in dad.get_node("Camera").get_node("Test").point:
-			rpc("bomb", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team)
+			rpc("bomb", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team, DAMAGE_E*(1 + dad.power_up/200))
 	pass
 
 func G():
@@ -105,20 +107,21 @@ func G():
 		G = 0
 		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
 		for p in dad.get_node("Camera").get_node("Test").point:
-			rpc("bazuca", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team)
+			rpc("bazuca", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team, DAMAGE_G*(1 + dad.power_up/200))
 	pass
 
 
 
 
 #SHOOT
-remotesync func shoot(who, loc, target, team):
+remotesync func shoot(who, loc, target, team, damage):
 	$AudioStreamPlayer3D.play()
 	var actor = load("res://scenes/powers/blank/bullet.tscn").instance()
 	actor.dad = who
 	actor.look_at_from_position(loc, target, Vector3(0,1,0))
 	actor.add_to_group("team"+team)
-	get_parent().get_parent().add_child(actor)
+	actor.damage = damage
+	get_tree().current_scene.add_child(actor)
 	pass
 
 #HITSCAN
@@ -130,25 +133,27 @@ remotesync func hitscan(point, loc):
 	var actor = load("res://particles/beam.tscn").instance()
 	actor.scale.z = loc.distance_to(point)
 	actor.look_at_from_position((loc + ((point-loc)*0.5)), point, Vector3(0,1,0))
-	get_parent().get_parent().add_child(actor)
+	get_tree().current_scene.add_child(actor)
 	pass
 
 #BOMB
-remotesync func bomb(who, loc, target, team):
+remotesync func bomb(who, loc, target, team, damage):
 	$AudioStreamPlayer3D.play()
 	var actor = load("res://scenes/powers/blank/bomb.tscn").instance()
 	actor.dad = who
 	actor.look_at_from_position(loc, target, Vector3(0,1,0))
 	actor.add_to_group("team"+team)
-	get_parent().get_parent().add_child(actor)
+	actor.damage = damage
+	get_tree().current_scene.add_child(actor)
 	pass
 
 #BAZUCA
-remotesync func bazuca(who, loc, target, team):
+remotesync func bazuca(who, loc, target, team, damage):
 	$AudioStreamPlayer3D.play()
 	var actor = load("res://scenes/powers/blank/bazuca.tscn").instance()
 	actor.dad = who
 	actor.look_at_from_position(loc, target, Vector3(0,1,0))
 	actor.add_to_group("team"+team)
-	get_parent().get_parent().add_child(actor)
+	actor.damage = damage
+	get_tree().current_scene.add_child(actor)
 	pass

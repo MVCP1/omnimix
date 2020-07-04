@@ -1,0 +1,52 @@
+[gd_scene load_steps=5 format=2]
+
+[sub_resource type="ParticlesMaterial" id=7]
+gravity = Vector3( 0, 0, 0 )
+color = Color( 1, 0, 0, 1 )
+
+[sub_resource type="SpatialMaterial" id=8]
+flags_transparent = true
+vertex_color_use_as_albedo = true
+albedo_color = Color( 1, 1, 1, 0.784314 )
+emission_enabled = true
+emission = Color( 1, 0, 0, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="CylinderMesh" id=9]
+material = SubResource( 8 )
+top_radius = 0.5
+bottom_radius = 0.5
+height = 10.0
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Particles
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	emitting = true
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+"
+
+[node name="laser" type="Spatial"]
+
+[node name="P" type="Particles" parent="."]
+transform = Transform( 2.65431e-15, 1.62921e-08, 0.1, 0.1, -1.62921e-08, 0, 1.62921e-08, 0.1, -1.62921e-08, 0, 0, 0 )
+cast_shadow = 0
+amount = 1
+draw_order = 1
+process_material = SubResource( 7 )
+draw_pass_1 = SubResource( 9 )
+script = SubResource( 6 )

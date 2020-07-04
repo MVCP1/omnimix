@@ -1,8 +1,8 @@
 extends RigidBody
 
 
-var speed  = 1
-var damage  = 30
+var speed = 1
+var damage
 var dad
 var team = "N"
 
@@ -11,7 +11,7 @@ var height = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	apply_impulse(Vector3(0,0,0),($front.global_transform.origin - global_transform.origin)*impulse + Vector3(0,height,0))
+	apply_central_impulse(($front.global_transform.origin - global_transform.origin)*impulse + Vector3(0,height,0))
 	pass # Replace with function body.
 
 

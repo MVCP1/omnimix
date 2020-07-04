@@ -37,3 +37,6 @@ func _on_kinematic_button_down():
 	pass # Replace with function body.
 
 
+func _on_wise_button_down():
+	choice = "wise"
+	pass # Replace with function body.

@@ -1,8 +1,8 @@
 extends Area
 
 
-var speed  = 0.25
-var damage  = 60
+var speed = 0.25
+var damage
 var dad
 var team = "N"
 

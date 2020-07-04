@@ -2625,20 +2625,20 @@ transform = Transform( 8.72565, 0, 0, 0, 10.0404, 0, 0, 0, 9.34653, 37.4833, 8.8
 [node name="wall8" parent="Desert/Walls/SideBOLD" instance=ExtResource( 2 )]
 transform = Transform( 8.72565, 0, 0, 0, 10.0404, 0, 0, 0, 9.34653, 34.8594, 8.86186, -37.8814 )
 
-[node name="dummy" parent="Desert" instance=ExtResource( 28 )]
-transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 16.4523, 2.02074, -9.67428 )
+[node name="dummy" parent="." instance=ExtResource( 28 )]
+transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 5.223, 2.02074, -9.67428 )
 
-[node name="dummy2" parent="Desert" instance=ExtResource( 28 )]
-transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -40.4404, 2.02074, -76.301 )
+[node name="dummy2" parent="." instance=ExtResource( 28 )]
+transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -51.6697, 2.02074, -76.301 )
 
-[node name="dummy3" parent="Desert" instance=ExtResource( 28 )]
-transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -39.377, 2.02074, -75.3053 )
+[node name="dummy3" parent="." instance=ExtResource( 28 )]
+transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -50.6063, 2.02074, -75.3053 )
 
-[node name="dummy4" parent="Desert" instance=ExtResource( 28 )]
-transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -41.5472, 2.02074, -77.3373 )
+[node name="dummy4" parent="." instance=ExtResource( 28 )]
+transform = Transform( -0.729983, 0, 0.683465, 0, 1, 0, -0.683465, 0, -0.729983, -52.7765, 2.02074, -77.3373 )
 
-[node name="dummy5" parent="Desert" instance=ExtResource( 28 )]
-transform = Transform( 0.0328934, 0, -0.999459, 0, 1, 0, 0.999459, 0, 0.0328934, -16.2771, 2.02074, -62.5407 )
+[node name="dummy5" parent="." instance=ExtResource( 28 )]
+transform = Transform( 0.0328934, 0, -0.999459, 0, 1, 0, 0.999459, 0, 0.0328934, -27.5064, 2.02074, -62.5407 )
 [connection signal="body_entered" from="WaitingRoom/TeamA/Spot1/A1" to="WaitingRoom" method="_on_A1_body_entered"]
 [connection signal="body_exited" from="WaitingRoom/TeamA/Spot1/A1" to="WaitingRoom" method="_on_A1_body_exited"]
 [connection signal="body_entered" from="WaitingRoom/TeamB/Spot1/B1" to="WaitingRoom" method="_on_B1_body_entered"]

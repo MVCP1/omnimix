@@ -4,6 +4,11 @@ extends Spatial
 var dad
 var dad_team = "N"
 
+const DAMAGE_MOUSEL = 4
+const DAMAGE_MOUSER = 30
+#const DAMAGE_SHIFT
+const DAMAGE_E = 40
+const DAMAGE_G = 20
 
 var mouseL = 0
 var mouseR = 0
@@ -41,6 +46,8 @@ var delay_duration = 0.5
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize()
+	dad = get_parent().get_parent()
+	set_process(true)
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -62,16 +69,16 @@ func _process(delta):
 	run = clamp(run - delta, 0, storm_duration)
 	
 	#SHOW CHARGING
-	dad.get_node("Camera/CanvasLayer/Control/charging").scale = Vector2(1,1)*ceil((charge/charge_max)*10)/10
+	dad.get_node("Camera/CanvasLayer/Control/charging").scale = Vector2(1,1)*(charge/charge_max)#ceil((charge/charge_max)*10)/10
 	dad.get_node("Camera/CanvasLayer/Control/charging_max").visible = charge > 0
 	
 	#SET THUNDER TARGET
 	target = [Vector2(0,aim_distance)]
 	if not storm > 0:
 		if E >= waitE:
-			for b in dad.get_node("BigArea").get_overlapping_bodies():
+			for b in get_node("BigArea").get_overlapping_bodies():
 				if b.is_in_group("player") and b != dad:
-					if true: #IS IN A DIFFERENT TEAM:
+					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
 						if not dad.get_node("Camera").is_position_behind(b.global_transform.origin):
 							if dad.get_node("Camera").unproject_position(b.global_transform.origin).distance_to(dad.get_node("Camera/CanvasLayer/Control/aim").position) <= aim_distance:
 								if dad.get_node("Camera").get_node("Test").can_see(b):
@@ -85,14 +92,14 @@ func _process(delta):
 	if storm > 0:
 		if delay <= 0:
 			var targets = []
-			for b in dad.get_node("BigArea").get_overlapping_bodies():
+			for b in get_node("BigArea").get_overlapping_bodies():
 				if b.is_in_group("player") and b != dad:
 					if true: #IS IN A DIFFERENT TEAM:
 						targets.append(b)
 			
 			if targets.size() > 0:
 				targets.shuffle()
-				targets[0].rpc("damage", 20)
+				targets[0].rpc("damage", DAMAGE_G*(1 + dad.power_up/200))
 			else:
 				targets.append(dad)
 				
@@ -146,17 +153,14 @@ func _process(delta):
 			dad.RUNNING_MULTIPLIER = 1
 	pass
 
-func _init():
-	dad = get_parent()
-	set_process(true)
-	pass
+
 
 func LMOUSE():
 	if mouseL >= waitL:
 		mouseL = 0
 		var hit = 0
 		var enemies = []
-		for b in dad.get_node("Camera").get_node("Area").get_overlapping_bodies():
+		for b in get_node("Area").get_overlapping_bodies():
 			if b.is_in_group("player"):
 				if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
 					if enemies.size() < shocks:
@@ -171,7 +175,7 @@ func LMOUSE():
 							enemies.append(b)
 		for b in enemies:
 			rpc("thunder", points(dad.get_node("Camera").get_node("Gun").global_transform.origin, b.global_transform.origin), 0.1, false)
-			b.rpc("damage", 4)
+			b.rpc("damage", DAMAGE_MOUSEL*(1 + dad.power_up/200))
 		if enemies.size() < shocks:
 			if not dad.get_node("Camera").get_node("Test").make_test(6, 2, shocks-enemies.size()):
 				if not dad.get_node("Camera").get_node("Test").make_test(10, 2, shocks-enemies.size(), Vector3(0,-1,-3)):
@@ -186,13 +190,13 @@ func RMOUSE():
 		charge = ceil((charge/charge_max)*10)/10
 		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
 		for p in dad.get_node("Camera").get_node("Test").point:
-			rpc("plasma_ball", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, charge, dad_team)
+			rpc("plasma_ball", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team, DAMAGE_MOUSER*(1 + dad.power_up/200), charge)
 	pass
 
 func E():
 	if E >= waitE and target.size() > 1:
 		E = 0
-		target[1].rpc("damage", 40)
+		target[1].rpc("damage", DAMAGE_E*(1 + dad.power_up/200))
 		rpc("thunder",  points(target[1].get_node("Camera").global_transform.origin+Vector3(0,20,0), target[1].get_node("Camera").global_transform.origin), 1, true)
 	pass
 
@@ -230,15 +234,15 @@ func points(start, end):
 
 
 #PLASMA_BALL
-remotesync func plasma_ball(who, loc, point, charging, team):
+remotesync func plasma_ball(who, loc, point, team, damage, charging):
 	$AudioStreamPlayer3D.play()
 	var actor = load("res://scenes/powers/kinematic/plasma_ball.tscn").instance()
 	actor.dad = who
-	actor.damage = actor.damage * charging
+	actor.damage = damage * charging
 	actor.get_node("CollisionShape").scale = actor.get_node("CollisionShape").scale*charging
 	actor.look_at_from_position(loc, point, Vector3(0,1,0))
 	actor.add_to_group("team"+team)
-	get_parent().get_parent().add_child(actor)
+	get_tree().current_scene.add_child(actor)
 	pass
 
 #THUNDER
@@ -246,14 +250,14 @@ remotesync func thunder(points, time, explosion):
 	if explosion:
 		var partic = load("res://particles/explosion.tscn").instance()
 		partic.global_translate(points[-1])
-		get_parent().get_parent().add_child(partic)
+		get_tree().current_scene.add_child(partic)
 	var i = 0
 	while i < (points.size()-1):
 		var actor = load("res://particles/thunder.tscn").instance()
 		actor.scale.z = points[i].distance_to(points[i+1])
 		actor.look_at_from_position((points[i] + ((points[i+1]-points[i])*0.5)), points[i+1], Vector3(0,1,0))
 		actor.get_node("Timer").wait_time = time
-		get_parent().get_parent().add_child(actor)
+		get_tree().current_scene.add_child(actor)
 		i += 1
 	pass
 
@@ -262,11 +266,11 @@ remotesync func hitscan(point, loc):
 	$AudioStreamPlayer3D.play()
 	var partic = load("res://particles/explosion.tscn").instance()
 	partic.global_translate(point)
-	get_parent().get_parent().add_child(partic)
+	get_tree().current_scene.add_child(partic)
 	var actor = load("res://particles/beam.tscn").instance()
 	actor.scale.z = loc.distance_to(point)
 	actor.look_at_from_position((loc + ((point-loc)*0.5)), point, Vector3(0,1,0))
-	get_parent().get_parent().add_child(actor)
+	get_tree().current_scene.add_child(actor)
 	pass
 
 

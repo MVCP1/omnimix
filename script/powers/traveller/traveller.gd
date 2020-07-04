@@ -4,6 +4,11 @@ extends Spatial
 var dad
 var dad_team = "N"
 
+const DAMAGE_MOUSEL = 40
+#const DAMAGE_MOUSER
+#const DAMAGE_SHIFT
+#const DAMAGE_E
+const DAMAGE_G = 30
 
 var mouseL = 0
 var mouseR = 0
@@ -29,6 +34,8 @@ var ult_time = 15
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	dad = get_parent().get_parent()
+	set_process(true)
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -60,14 +67,14 @@ func _process(delta):
 	dad.confirm = wind
 	if wind:
 		if dad.get_node("Camera").get_node("Test").make_test(100, 0, 1):
-			get_node("wind_fade").visible = true
-			get_node("wind_fade").global_transform.origin = dad.get_node("Camera").get_node("Test").point[0]
+			dad.get_node("wind_fade").visible = true
+			dad.get_node("wind_fade").global_transform.origin = dad.get_node("Camera").get_node("Test").point[0]
 			if dad.get_node("Camera").get_node("Test").normal[0].y == 1:
-				get_node("wind_fade").get_child(0).material.set_albedo(Color(0,1,1,0.1))
+				dad.get_node("wind_fade").get_child(0).material.set_albedo(Color(0,1,1,0.1))
 			else:
-				get_node("wind_fade").get_child(0).material.set_albedo(Color(1,0.5,0.5,0.1))
+				dad.get_node("wind_fade").get_child(0).material.set_albedo(Color(1,0.5,0.5,0.1))
 		else:
-			get_node("wind_fade").visible = false
+			dad.get_node("wind_fade").visible = false
 	
 	#INPUTS
 	if (dad.is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -77,8 +84,8 @@ func _process(delta):
 			else:
 				mouseL = 0
 				wind = false
-				get_node("wind_fade").queue_free()
-				if get_node("wind_fade").visible and get_node("wind_fade").get_child(0).material.albedo_color == Color(0,1,1,0.1):
+				dad.get_node("wind_fade").queue_free()
+				if dad.get_node("wind_fade").visible and dad.get_node("wind_fade").get_child(0).material.albedo_color == Color(0,1,1,0.1):
 					E = 0
 					rpc("wind", dad.name, dad.get_node("Camera").get_node("Test").get_collision_point(), dad_team)
 		if Input.is_action_pressed("mouse_right"):
@@ -90,7 +97,7 @@ func _process(delta):
 			else:
 				wind = false
 				mouseR = 0
-				get_node("wind_fade").queue_free()
+				dad.get_node("wind_fade").queue_free()
 		else:
 			dad.get_node("Camera").fov = 70
 			dad.SENSITIVITY = -0.001
@@ -107,10 +114,7 @@ func _process(delta):
 			SPACE()
 	pass
 
-func _init():
-	dad = get_parent()
-	set_process(true)
-	pass
+
 
 func LMOUSE():
 	if mouseL >= waitL:
@@ -122,7 +126,10 @@ func LMOUSE():
 			if b != null:
 				if b.is_in_group("player"):
 					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
-						b.rpc("damage", 40)
+						if ult <= 0:
+							b.rpc("damage", DAMAGE_MOUSEL*(1 + dad.power_up/200))
+						else:
+							b.rpc("damage", DAMAGE_G*(1 + dad.power_up/200))
 	pass
 
 func SHIFT():
@@ -137,7 +144,7 @@ func E():
 			var actor = load("res://scenes/powers/traveller/wind_fade.tscn").instance()
 			actor.global_translate(dad.get_node("Camera").get_node("Test").get_collision_point())
 			actor.dad = dad.name
-			add_child(actor)
+			dad.add_child(actor)
 			wind = true
 	pass
 
@@ -165,21 +172,21 @@ remotesync func hitscan(point, loc):
 	$AudioStreamPlayer3D.play()
 	var partic = load("res://particles/explosion.tscn").instance()
 	partic.global_translate(point)
-	get_parent().get_parent().add_child(partic)
+	get_tree().current_scene.add_child(partic)
 	var actor = load("res://particles/beam.tscn").instance()
 	actor.scale.z = loc.distance_to(point)
 	actor.look_at_from_position((loc + ((point-loc)*0.5)), point, Vector3(0,1,0))
-	get_parent().get_parent().add_child(actor)
+	get_tree().current_scene.add_child(actor)
 	pass
 
 #WIND
 remotesync func wind(who, target, team):
 	var partic = load("res://particles/wind_up.tscn").instance()
 	partic.global_translate(target)
-	get_parent().get_parent().add_child(partic)
+	get_tree().current_scene.add_child(partic)
 	var actor = load("res://scenes/powers/traveller/wind.tscn").instance()
 	actor.dad = who
 	actor.global_translate(target)
 	actor.add_to_group("team"+team)
-	get_parent().get_parent().add_child(actor)
+	get_tree().current_scene.add_child(actor)
 	pass
