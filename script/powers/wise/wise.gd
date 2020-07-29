@@ -2,7 +2,6 @@ extends Spatial
 
 
 var dad
-var dad_team = "N"
 
 const DAMAGE_MOUSEL = 2
 const DAMAGE_MOUSER = 20
@@ -39,15 +38,11 @@ var aim_distance = 200
 func _ready():
 	dad = get_parent().get_parent()
 	set_process(true)
+	dad.ammo = 1
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	#GET DAD TEAM
-	if(dad.is_in_group("teamA")):
-		dad_team = "A"
-	elif(dad.is_in_group("teamB")):
-		dad_team = "B"
 		
 	#POWER COOLDOWN
 	mouseL = clamp(mouseL + delta, 0, waitL)
@@ -64,7 +59,7 @@ func _process(delta):
 	if E >= waitE:
 		for b in get_node("BigArea").get_overlapping_bodies():
 			if b.is_in_group("player") and b != dad:
-				if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+				if dad.team != b.team:
 					if not dad.get_node("Camera").is_position_behind(b.global_transform.origin):
 						if dad.get_node("Camera").unproject_position(b.global_transform.origin).distance_to(dad.get_node("Camera/CanvasLayer/Control/aim").position) <= aim_distance:
 							if dad.get_node("Camera").get_node("Test").can_see(b):
@@ -101,9 +96,9 @@ func LMOUSE():
 				if b != null and b != target:
 					if b.is_in_group("player"):
 						if rgb.x == 1:
-							if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+							if dad.team != b.team:
 								target = b
-						if(dad.is_in_group("teamA") and b.is_in_group("teamA")) or (dad.is_in_group("teamB") and b.is_in_group("teamB")):
+						if dad.team == b.team:
 							if rgb.y == 1 or rgb.z == 1:
 								target = b
 							for p in dad.get_node("Camera").get_node("Test").point:
@@ -116,12 +111,12 @@ func LMOUSE():
 			for p in dad.get_node("Camera").get_node("Test").point:
 				if p.distance_to(target.global_transform.origin) <= target_distance:
 					if rgb.x == 1:
-						if(dad.is_in_group("teamA") and target.is_in_group("teamB")) or (dad.is_in_group("teamB") and target.is_in_group("teamA")):
+						if dad.team != target.team:
 							target.rpc("damage", DAMAGE_MOUSEL*(1 + dad.power_up/200))
 							rpc("laser", true, target.global_transform.origin, dad.get_node("Camera").get_node("Gun").global_transform.origin, rgb)
-						else:
+						elif rgb.y != 1:
 							target = null
-					if(dad.is_in_group("teamA") and target.is_in_group("teamA")) or (dad.is_in_group("teamB") and target.is_in_group("teamB")):
+					if dad.team == target.team:
 						if rgb.y == 1:
 							target.rpc("heal", DAMAGE_MOUSEL)
 							dad.rpc("heal", DAMAGE_MOUSEL/2)
@@ -129,7 +124,7 @@ func LMOUSE():
 							target.rpc("power_up", DAMAGE_MOUSEL)
 							dad.rpc("power_up", DAMAGE_MOUSEL/2)
 						rpc("laser", true, target.global_transform.origin, dad.get_node("Camera").get_node("Gun").global_transform.origin, rgb)
-					else:
+					elif rgb.y != 1:
 						target = null
 				else:
 					target = null
@@ -140,7 +135,7 @@ func RMOUSE():
 		mouseR = 0
 		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
 		for p in dad.get_node("Camera").get_node("Test").point:
-			rpc("wave_bomb", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team, rgb, DAMAGE_MOUSER, (1 + dad.power_up/200))
+			rpc("wave_bomb", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad.team, rgb, DAMAGE_MOUSER, (1 + dad.power_up/200))
 	pass
 
 func SHIFT():
@@ -157,7 +152,7 @@ func SHIFT():
 func E():
 	if E >= waitE and light.size() > 1:
 		E = 0
-		rpc("light", dad.name, light[1].name, dad_team, 8)
+		rpc("light", dad.name, light[1].name, dad.team, 8)
 	pass
 
 func G():
@@ -189,7 +184,7 @@ remotesync func wave_bomb(who, loc, target, team, color, damage, bonus):
 	var actor = load("res://scenes/powers/wise/wave_bomb.tscn").instance()
 	actor.dad = who
 	actor.look_at_from_position(loc, target, Vector3(0,1,0))
-	actor.add_to_group("team"+team)
+	actor.team = team
 	actor.rgb = color
 	actor.damage = damage
 	actor.bonus = bonus
@@ -202,7 +197,7 @@ remotesync func light(who, target_name, team, time):
 	var actor = load("res://scenes/powers/wise/light.tscn").instance()
 	actor.dad = who
 	actor.target = target_name
-	actor.add_to_group("team"+team)
+	actor.team = team
 	actor.time = time
 	get_tree().current_scene.add_child(actor)
 	pass

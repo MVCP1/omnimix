@@ -2,7 +2,6 @@
 
 [ext_resource path="res://script/powers/traveller/wind.gd" type="Script" id=1]
 
-
 [sub_resource type="CylinderShape" id=1]
 
 [node name="Spatial" type="Area"]

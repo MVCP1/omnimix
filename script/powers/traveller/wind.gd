@@ -15,7 +15,8 @@ func _ready():
 func _process(delta):
 	for i in get_overlapping_bodies():
 		if i.is_in_group("player"):
-			i.y_vel = i.JUMP_FORCE
+			i.rpc("add_knockback", Vector3(0,1,0))
+			#i.y_vel = i.JUMP_FORCE
 	pass
 
 

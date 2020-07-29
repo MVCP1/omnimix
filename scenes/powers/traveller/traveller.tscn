@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://sample/explosion.wav" type="AudioStream" id=1]
 [ext_resource path="res://script/powers/traveller/traveller.gd" type="Script" id=2]
+
+[sub_resource type="CylinderShape" id=1]
 
 [node name="Power" type="Spatial"]
 script = ExtResource( 2 )
@@ -10,3 +12,9 @@ script = ExtResource( 2 )
 stream = ExtResource( 1 )
 unit_db = -10.0
 pitch_scale = 5.0
+
+[node name="Area" type="Area" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="Area"]
+transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 1 )

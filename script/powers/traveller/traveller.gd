@@ -2,7 +2,6 @@ extends Spatial
 
 
 var dad
-var dad_team = "N"
 
 const DAMAGE_MOUSEL = 40
 #const DAMAGE_MOUSER
@@ -36,15 +35,11 @@ var ult_time = 15
 func _ready():
 	dad = get_parent().get_parent()
 	set_process(true)
+	dad.ammo = 1
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	#GET DAD TEAM
-	if(dad.is_in_group("teamA")):
-		dad_team = "A"
-	elif(dad.is_in_group("teamB")):
-		dad_team = "B"
 		
 	#POWER COOLDOWN
 	mouseR = clamp(mouseR + delta, 0, waitR)
@@ -87,7 +82,7 @@ func _process(delta):
 				dad.get_node("wind_fade").queue_free()
 				if dad.get_node("wind_fade").visible and dad.get_node("wind_fade").get_child(0).material.albedo_color == Color(0,1,1,0.1):
 					E = 0
-					rpc("wind", dad.name, dad.get_node("Camera").get_node("Test").get_collision_point(), dad_team)
+					rpc("wind", dad.name, dad.get_node("Camera").get_node("Test").get_collision_point(), dad.team)
 		if Input.is_action_pressed("mouse_right"):
 			if not wind:
 				if mouseR >= waitR:
@@ -125,7 +120,7 @@ func LMOUSE():
 		for b in dad.get_node("Camera").get_node("Test").body:
 			if b != null:
 				if b.is_in_group("player"):
-					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+					if dad.team != b.team:
 						if ult <= 0:
 							b.rpc("damage", DAMAGE_MOUSEL*(1 + dad.power_up/200))
 						else:
@@ -136,6 +131,10 @@ func SHIFT():
 	if S >= waitS:
 		S = 0
 		dad.y_vel = dad.JUMP_FORCE*2
+		for b in $Area.get_overlapping_bodies():
+			if b.is_in_group("player"):
+				if dad.team != b.team:
+					b.rpc("add_knockback", Vector3((b.global_transform.origin - dad.global_transform.origin).x,0,(b.global_transform.origin - dad.global_transform.origin).z).normalized()*2)
 	pass
 
 func E():
@@ -187,6 +186,6 @@ remotesync func wind(who, target, team):
 	var actor = load("res://scenes/powers/traveller/wind.tscn").instance()
 	actor.dad = who
 	actor.global_translate(target)
-	actor.add_to_group("team"+team)
+	actor.team = team
 	get_tree().current_scene.add_child(actor)
 	pass

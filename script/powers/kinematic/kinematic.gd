@@ -2,7 +2,6 @@ extends Spatial
 
 
 var dad
-var dad_team = "N"
 
 const DAMAGE_MOUSEL = 4
 const DAMAGE_MOUSER = 30
@@ -48,15 +47,11 @@ func _ready():
 	randomize()
 	dad = get_parent().get_parent()
 	set_process(true)
+	dad.ammo = 1
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	#GET DAD TEAM
-	if(dad.is_in_group("teamA")):
-		dad_team = "A"
-	elif(dad.is_in_group("teamB")):
-		dad_team = "B"
 		
 	#POWER COOLDOWN
 	mouseL = clamp(mouseL + delta, 0, waitL)
@@ -78,7 +73,7 @@ func _process(delta):
 		if E >= waitE:
 			for b in get_node("BigArea").get_overlapping_bodies():
 				if b.is_in_group("player") and b != dad:
-					if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+					if dad.team != b.team:
 						if not dad.get_node("Camera").is_position_behind(b.global_transform.origin):
 							if dad.get_node("Camera").unproject_position(b.global_transform.origin).distance_to(dad.get_node("Camera/CanvasLayer/Control/aim").position) <= aim_distance:
 								if dad.get_node("Camera").get_node("Test").can_see(b):
@@ -94,7 +89,7 @@ func _process(delta):
 			var targets = []
 			for b in get_node("BigArea").get_overlapping_bodies():
 				if b.is_in_group("player") and b != dad:
-					if true: #IS IN A DIFFERENT TEAM:
+					if b.team != dad.team:
 						targets.append(b)
 			
 			if targets.size() > 0:
@@ -162,7 +157,7 @@ func LMOUSE():
 		var enemies = []
 		for b in get_node("Area").get_overlapping_bodies():
 			if b.is_in_group("player"):
-				if(dad.is_in_group("teamA") and b.is_in_group("teamB")) or (dad.is_in_group("teamB") and b.is_in_group("teamA")):
+				if dad.team != b.team:
 					if enemies.size() < shocks:
 						enemies.append(b)
 					else:
@@ -190,7 +185,7 @@ func RMOUSE():
 		charge = ceil((charge/charge_max)*10)/10
 		dad.get_node("Camera").get_node("Test").make_test(100, 0, 1)
 		for p in dad.get_node("Camera").get_node("Test").point:
-			rpc("plasma_ball", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad_team, DAMAGE_MOUSER*(1 + dad.power_up/200), charge)
+			rpc("plasma_ball", dad.name, dad.get_node("Camera").get_node("Gun").global_transform.origin, p, dad.team, DAMAGE_MOUSER*(1 + dad.power_up/200), charge)
 	pass
 
 func E():
@@ -241,7 +236,7 @@ remotesync func plasma_ball(who, loc, point, team, damage, charging):
 	actor.damage = damage * charging
 	actor.get_node("CollisionShape").scale = actor.get_node("CollisionShape").scale*charging
 	actor.look_at_from_position(loc, point, Vector3(0,1,0))
-	actor.add_to_group("team"+team)
+	actor.team = team
 	get_tree().current_scene.add_child(actor)
 	pass
 

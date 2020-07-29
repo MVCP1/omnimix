@@ -38,9 +38,9 @@ func _on_Hit_body_entered(body):
 				if it.name != dad:
 					if (is_network_master()):
 						if rgb.x == 1:
-							if (is_in_group("teamA") and it.is_in_group("teamB")) or (is_in_group("teamB") and it.is_in_group("teamA")):
+							if team != it.team:
 								it.rpc("damage", damage*bonus)
-						if (is_in_group("teamA") and it.is_in_group("teamA")) or (is_in_group("teamB") and it.is_in_group("teamB")):
+						if team == it.team:
 							if rgb.y == 1:
 								it.rpc("heal", damage)
 							if rgb.z == 1:

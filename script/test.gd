@@ -42,6 +42,14 @@ func make_test(limit:float = 100.0, spread:float = 0.0, amount:int = 1, vect:Vec
 	return hit
 
 
+
+func shotgun(limit:float = 50.0, radius:float = 1.0, amount:int = 1):
+	print("YET TO BE IMPLEMENTED")
+	pass
+
+
+
+
 func can_see(who):
 	var can = false
 	look_at(who.global_transform.origin, Vector3(0,1,0))
@@ -52,7 +60,6 @@ func can_see(who):
 			can = true
 	rotation = Vector3(0,0,0)
 	return can
-
 
 
 #SPREAD FUNCTION

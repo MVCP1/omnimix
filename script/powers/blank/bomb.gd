@@ -26,7 +26,7 @@ func _ready():
 func _on_Timer_timeout():
 	for it in get_node("Area").get_overlapping_bodies():
 		if it.is_in_group("player"):
-			if (is_in_group("teamA") and it.is_in_group("teamB")) or (is_in_group("teamB") and it.is_in_group("teamA")):
+			if team != it.team:
 				if (get_tree().is_network_server()):
 					it.rpc("damage", damage)
 	var eclass = load("res://particles/explosion.tscn")

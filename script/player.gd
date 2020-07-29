@@ -2,8 +2,8 @@ extends KinematicBody
 
 const SPEED = 10
 const JUMP_FORCE = 10
-const GRAVITY = 0.98/2
-const MAX_FALL_SPEED = 15
+const GRAVITY = 0.5#0.98/2
+const MAX_FALL_SPEED = 25
  
 var SENSITIVITY = -0.001
 const ANGLE = 80
@@ -17,9 +17,14 @@ var on_floor
 var y_vel = 0
 var inertia = Vector3()
 
+var knockback = Vector3()
+
 puppet var repl_position = Transform()
 
 puppetsync var life = 100
+puppetsync var defence = []
+
+puppetsync var team = "N"
 
 puppetsync var power_up = 0
 var power_up_duration = 2
@@ -31,6 +36,8 @@ var confirm = false
 var duration = 1
 var duration_value = 0
 var charging = 0
+
+var ammo = 0
 
 puppetsync var seen = 0
 
@@ -69,7 +76,10 @@ func set_dominant_color(color):
 
 remotesync func damage(value):
 	if (is_network_master()):
-		rset("life", clamp(life-value, 0, 100))
+		var result = value
+		for d in defence:
+			result = result*d[0]
+		rset("life", clamp(life-result, 0, 100))
 		if life <= 0:
 			rpc("die")
 	if not (is_network_master()):
@@ -92,15 +102,28 @@ remotesync func power_up(value):
 			power_up_max = power_up_delay
 	pass
 
+remotesync func defend(value, time, giver):
+	if (is_network_master()):
+		var has = false
+		for d in defence:
+			if not has:
+				if d[2] == giver:
+					d[1] = time
+					has = true
+		if not has:
+			defence.append([value, time, giver])
+		rset("defence", defence)
+
 
 remotesync func die():
-	if is_in_group("teamA"):
-		translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
-	elif is_in_group("teamB"):
-		translation = get_parent().get_node("SpawnPoints").get_node("TeamB").get_node(str(randi() % 5 + 1)).global_transform.origin
-	else:
-		add_to_group("teamA")
-		translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
+	match team:
+		"A":
+			translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
+		"B":
+			translation = get_parent().get_node("SpawnPoints").get_node("TeamB").get_node(str(randi() % 5 + 1)).global_transform.origin
+		_:
+			team = "A"
+			translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
 	rpc("heal", 200)
 
 
@@ -119,6 +142,12 @@ remotesync func add_powers(choice):
 	pass
 
 
+remotesync func add_knockback(direction:Vector3):
+	if (is_network_master()):
+		knockback = direction*JUMP_FORCE
+	pass
+
+
 remotesync func see(time):
 	if (is_network_master()):
 		if time > seen:
@@ -129,7 +158,7 @@ remotesync func see(time):
 func being_seen():
 	if seen > 0:
 		var player = get_tree().current_scene.get_node(str(gamestate.player_info.net_id))
-		if(is_in_group("teamA") and player.is_in_group("teamB")) or (is_in_group("teamB") and player.is_in_group("teamA")):
+		if team != player.team:
 			$skin/outline.get_surface_material(0).flags_no_depth_test = not get_tree().current_scene.get_node(str(gamestate.player_info.net_id)).get_node("Camera").get_node("Test").can_see(self)
 	else:
 		$skin/outline.get_surface_material(0).flags_no_depth_test = false
@@ -160,12 +189,19 @@ func _physics_process(delta):
 				rpc("damage", 200)
 			#CHANGE TEAM
 			if Input.is_action_just_pressed("t"):
-				if(is_in_group("teamA")):
-					remove_from_group("teamA")
-					add_to_group("teamB")
-				else:#lif(is_in_group("teamB")):
-					remove_from_group("teamB")
-					add_to_group("teamA")
+				match team:
+					"A":
+						team = "B"
+					"B":
+						team = "A"
+					_:
+						team = "A"
+			
+			#DEFENCE TIMER
+			for d in defence:
+				d[1] = d[1] - delta
+				if d[1] <= 0:
+					defence.erase(d)
 			
 			
 			#FLOOR CHECK
@@ -192,6 +228,10 @@ func _physics_process(delta):
 			move *= RUNNING_MULTIPLIER
 			
 			#ADDING GRAVITY
+			if knockback.y > 1:
+				y_vel = knockback.y
+				knockback.y -= GRAVITY
+			
 			move.y = y_vel
 			
 			#CALCULATES INERTIA USING AIR FRICTION
@@ -208,16 +248,37 @@ func _physics_process(delta):
 				if abs(inertia.z) < abs(move.z) or not inertia.z*move.z > 0:
 					inertia.z += move.z*AIR_CONTROL
 			
+			
 			#ACTUALLY MOVING
-			if not on_floor:
-				move_and_slide(Vector3(inertia.x,move.y,inertia.z), Vector3(0, 1, 0), true)
+			if knockback == Vector3(0,0,0):
+				if not on_floor:
+					move_and_slide(Vector3(inertia.x,move.y,inertia.z), Vector3(0, 1, 0), true)
+				else:
+					move_and_slide(move, Vector3(0, 1, 0), true)
 			else:
-				move_and_slide(move, Vector3(0, 1, 0), true)
+				if not on_floor:
+					move_and_slide(Vector3(inertia.x*0.5+knockback.x,move.y,inertia.z*0.5+knockback.z), Vector3(0, 1, 0), true)
+				else:
+					move_and_slide(Vector3(move.x*0.5+knockback.x,move.y,move.z*0.5+knockback.z), Vector3(0, 1, 0), true)
+			
 			
 			
 			#HITTING A CEILING STOPS THE JUMP
 			if is_on_ceiling() and y_vel > 0:
 				y_vel = 0
+				knockback.y = 0
+			
+			#KNOCKBACK SLOWING DOWN
+			if abs(knockback.x) < 1 and abs(knockback.y) < 1 and abs(knockback.z) < 1:
+				knockback = Vector3(0,0,0)
+			else:
+				if is_on_wall():
+					knockback.x *= 0.8
+					knockback.y *= 0.9
+					knockback.z *= 0.8
+				else:
+					knockback *= 0.9
+			
 			
 			#GRAVITY
 			y_vel -= GRAVITY
@@ -245,6 +306,8 @@ func _physics_process(delta):
 				$Camera/CanvasLayer/Control/enemy.visible = false
 				$Camera/CanvasLayer/Control/charging_max.visible = false
 				$Camera/CanvasLayer/Control/charging.scale = Vector2(0,0)
+			#AMMO
+			$Camera/CanvasLayer/Control/Ammunition/Ammo.text = str(ammo)
 			#CONFIRM POWERS
 			$Camera/CanvasLayer/Control/Confirm.visible = confirm
 			#DURATION POWERS
@@ -259,6 +322,12 @@ func _physics_process(delta):
 				#rset("power_up", clamp(power_up - (100*delta/power_up_duration), 0, 100))
 			else:
 				power_up_max = clamp(power_up_max - delta, 0, 100)
+			#DEFENCES
+			var defs = ""
+			for d in defence:
+				defs = defs + str(d[0]) + "x" + " "
+			$Camera/CanvasLayer/Control/Defences.text = defs
+			
 			
 			#BEING SEEN TIME
 			if seen > 0:
@@ -321,19 +390,22 @@ func _physics_process(delta):
 		rset("repl_position", transform)
 	
 		rset("life", life)
+		rset("team", team)
 		rset("power_up", power_up)
 		rset("seen", seen)
+		rset("defence", defence)
 	else:
 		# THINGS HERE HAPPEN ONLY IF THIS SCENE ISN'T CONTROLLED BY THE CLIENT
 		# Take replicated variables to set current actor state
 		transform = repl_position
-		being_seen()
+		$skin/outline.visible =  not get_tree().current_scene.get_node(str(gamestate.player_info.net_id)).team == team or defence.has([])
 		$Healthbar/Viewport/Health.value = life
 		$Powerbar/Viewport/Power_Up.value = power_up
 		$Powerbar.visible = power_up > 0
-	
+		
 	#INDEPENDENT PLAYER PROCESSES:
 	####( !!!! REMEMBER FROM DOWN HERE EVERYTHING HAPPENS EVEN IF THIS PLAYER ISN'T CONTROLLED BY THE CLIENT !!!! )
 	
+	being_seen()
 	
 	

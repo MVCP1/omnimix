@@ -32,9 +32,9 @@ func _physics_process(delta):
 			hasB = false
 			for i in $Area.get_overlapping_bodies():
 				if i.is_in_group("player"):
-					if i.is_in_group("teamA"):
+					if i.team == "A":
 						hasA = true
-					if i.is_in_group("teamB"):
+					if i.team == "B":
 						hasB = true
 			
 			if not (hasA and hasB) and (hasA or hasB):

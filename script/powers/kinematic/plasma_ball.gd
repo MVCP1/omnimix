@@ -40,7 +40,7 @@ func hit(it):
 	if it.name != dad:
 		for it in $CollisionShape/Area.get_overlapping_bodies():
 			if it.is_in_group("player"):
-				if (is_in_group("teamA") and it.is_in_group("teamB")) or (is_in_group("teamB") and it.is_in_group("teamA")):
+				if team != it.team:
 					if (get_tree().is_network_server()):
 						it.rpc("damage", damage)
 		var eclass = load("res://particles/explosion.tscn")
