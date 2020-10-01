@@ -28,6 +28,8 @@ var seen = 0
 
 var knockback = Vector3()
 
+puppetsync var stunned = 0
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	add_to_group("player")
@@ -76,6 +78,12 @@ remotesync func defend(value, time, giver):
 	if not has:
 		defence.append([value, time, giver])
 
+remotesync func stun(time):
+	if (is_network_master()):
+		if time > stunned:
+			rset("stunned", time)
+	pass
+
 func _physics_process(delta):
 	$Sprite3D/Viewport/ProgressBar.value = life
 	
@@ -98,7 +106,7 @@ func _physics_process(delta):
 	var move = Vector3()
 	
 	
-	if moving:
+	if moving and stunned <= 0:
 		if add:
 			time = clamp(time + delta, (-1)*cicle_time, cicle_time)
 			move.z = 10
@@ -133,6 +141,11 @@ func _physics_process(delta):
 	#PROCESSES IF IS BEING SEEN
 	being_seen()
 	
+	#PROCESSES STUN
+	if stunned > 0:
+		stunned -= delta
+	if stunned < 0:
+		stunned = 0
 	
 	#GRAVITY
 	y_vel -= GRAVITY

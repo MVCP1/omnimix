@@ -71,9 +71,20 @@ text = "MAGNO"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="steady" type="Button" parent="Control"]
+margin_left = 550.0
+margin_top = 350.0
+margin_right = 650.0
+margin_bottom = 400.0
+text = "STEADY"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="button_down" from="Control/confirm" to="." method="_on_confirm_button_down"]
 [connection signal="button_down" from="Control/blank" to="." method="_on_blank_button_down"]
 [connection signal="button_down" from="Control/traveller" to="." method="_on_traveller_button_down"]
 [connection signal="button_down" from="Control/kinematic" to="." method="_on_kinematic_button_down"]
 [connection signal="button_down" from="Control/wise" to="." method="_on_wise_button_down"]
 [connection signal="button_down" from="Control/magno" to="." method="_on_magno_button_down"]
+[connection signal="button_down" from="Control/steady" to="." method="_on_steady_button_down"]

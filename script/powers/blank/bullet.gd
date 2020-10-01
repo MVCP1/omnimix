@@ -20,6 +20,10 @@ func _ready():
 	#pass
 
 func _physics_process(delta):
+	set_collision_mask_bit(1, team == "B")
+	set_collision_mask_bit(2, team == "A")
+	$RayCast.set_collision_mask_bit(1, team == "B")
+	$RayCast.set_collision_mask_bit(2, team == "A")
 	#Move the bullet forwards
 	$RayCast.force_raycast_update()
 	if $RayCast.is_colliding():

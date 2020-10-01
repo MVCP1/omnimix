@@ -70,7 +70,7 @@ func _process(delta):
 	dad.get_node("Camera/CanvasLayer/Control/enemy").visible = light.size() > 1
 	
 	#INPUTS
-	if (dad.is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if dad.is_network_master() and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and dad.stunned <= 0:
 		if Input.is_action_pressed("mouse_left"):
 			LMOUSE()
 		if Input.is_action_just_released("mouse_left"):

@@ -28,7 +28,7 @@ transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
 material = SubResource( 2 )
 
 [node name="Area" type="Area" parent="CollisionShape"]
-transform = Transform( 20, 0, 0, 0, 20, 0, 0, 0, 20, 0, 0, 0 )
+transform = Transform( 5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0 )
 
 [node name="CollisionShape" type="CollisionShape" parent="CollisionShape/Area"]
 shape = SubResource( 3 )

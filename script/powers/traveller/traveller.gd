@@ -72,7 +72,12 @@ func _process(delta):
 			dad.get_node("wind_fade").visible = false
 	
 	#INPUTS
-	if (dad.is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if dad.stunned > 0 and wind:
+		wind = false
+		mouseR = 0
+		dad.get_node("wind_fade").queue_free()
+		
+	if dad.is_network_master() and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and dad.stunned <= 0:
 		if Input.is_action_pressed("mouse_left"):
 			if not wind:
 				LMOUSE()

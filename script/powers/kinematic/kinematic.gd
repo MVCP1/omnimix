@@ -108,7 +108,11 @@ func _process(delta):
 	
 	
 	#INPUTS
-	if (dad.is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if dad.stunned > 0:
+		charge = 0
+		
+	
+	if dad.is_network_master() and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and dad.stunned <= 0:
 		if Input.is_action_pressed("mouse_left"):
 			if not storm > 0 and charge <= 0:
 				LMOUSE()

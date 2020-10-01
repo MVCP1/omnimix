@@ -63,9 +63,9 @@ func _process(delta):
 	
 	
 	#INPUTS
-	if (dad.is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if dad.is_network_master() and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		
-		if Input.is_action_pressed("mouse_right"):
+		if Input.is_action_pressed("mouse_right") and dad.stunned <= 0:
 			RMOUSE()
 		else:
 			defending = false
@@ -74,7 +74,7 @@ func _process(delta):
 		
 		if defending:
 			dad.rpc("defend", 0.75, 0.1, dad.name + "_rmouse")
-		else:
+		elif dad.stunned <= 0:
 			if Input.is_action_pressed("mouse_left"):
 				LMOUSE()
 			

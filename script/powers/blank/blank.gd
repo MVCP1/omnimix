@@ -49,7 +49,7 @@ func _process(delta):
 			dad.ammo = ammo_max
 	
 	#INPUTS
-	if (dad.is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if dad.is_network_master() and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and dad.stunned <= 0:
 		if Input.is_action_pressed("mouse_left"):
 			if dad.ammo > 0 and reload == 0:
 				LMOUSE()

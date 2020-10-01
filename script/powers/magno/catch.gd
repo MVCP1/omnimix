@@ -21,6 +21,10 @@ func _ready():
 	#pass
 
 func _physics_process(delta):
+	set_collision_mask_bit(1, team == "B")
+	set_collision_mask_bit(2, team == "A")
+	$RayCast.set_collision_mask_bit(1, team == "B")
+	$RayCast.set_collision_mask_bit(2, team == "A")
 	
 	$Spatial.rotation = $Spatial.rotation + Vector3(0,0.2,0)
 	

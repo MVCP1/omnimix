@@ -26,12 +26,14 @@ puppetsync var defence = []
 
 puppetsync var team = "N"
 
+#POWER UP
 puppetsync var power_up = 0
 var power_up_duration = 2
 var power_up_max = 0
 var power_up_max_duration = 1
 var power_up_delay = 0.2
 
+#CONFIRMATION AND DURATION UI
 var confirm = false
 var duration = 1
 var duration_value = 0
@@ -40,6 +42,9 @@ var charging = 0
 var ammo = 0
 
 puppetsync var seen = 0
+
+puppetsync var stunned = 0
+
 
 func _ready():
 	add_to_group("player")
@@ -58,7 +63,7 @@ func _ready():
 	pass
 
 func _input(event):
-	if (is_network_master()) and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if is_network_master() and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and stunned <= 0:
 		#CAMERA ROTATION
 		if event is InputEventMouseMotion:
 			set_rotation(get_rotation() + Vector3(0,event.relative.x * SENSITIVITY, 0))
@@ -124,6 +129,7 @@ remotesync func die():
 		_:
 			team = "A"
 			translation = get_parent().get_node("SpawnPoints").get_node("TeamA").get_node(str(randi() % 5 + 1)).global_transform.origin
+	RUNNING_MULTIPLIER = 1
 	rpc("heal", 200)
 
 
@@ -139,6 +145,7 @@ remotesync func add_powers(choice):
 		$Camera.add_child(load("res://scenes/powers/" + choice + "/" + choice + ".tscn").instance())
 	if (is_network_master()):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	RUNNING_MULTIPLIER = 1
 	pass
 
 
@@ -164,11 +171,18 @@ func being_seen():
 		$skin/outline.get_surface_material(0).flags_no_depth_test = false
 	pass
 
-
+remotesync func stun(time):
+	if (is_network_master()):
+		if time > stunned:
+			rset("stunned", time)
+	pass
 
 
 func _physics_process(delta):
 	if (is_network_master()):
+		$Camera/Test.set_collision_mask_bit(1, team == "B")
+		$Camera/Test.set_collision_mask_bit(2, team == "A")
+		
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			#SETS THE CURRENT CAMERA
 			$Camera.set_current(true)
@@ -186,7 +200,8 @@ func _physics_process(delta):
 				add_child(choice)
 			#SUICIDE
 			if Input.is_action_just_pressed("k"):
-				rpc("damage", 200)
+				stun(1)
+				rpc("damage", 20)
 			#CHANGE TEAM
 			if Input.is_action_just_pressed("t"):
 				match team:
@@ -211,14 +226,15 @@ func _physics_process(delta):
 			#MOVEMENT VECTOR
 			var move = Vector3()
 			
-			if Input.is_action_pressed("front"):
-				move.z -= 1
-			if Input.is_action_pressed("back"):
-				move.z += 1
-			if Input.is_action_pressed("right"):
-				move.x += 1
-			if Input.is_action_pressed("left"):
-				move.x -= 1
+			if stunned <= 0:
+				if Input.is_action_pressed("front"):
+					move.z -= 1
+				if Input.is_action_pressed("back"):
+					move.z += 1
+				if Input.is_action_pressed("right"):
+					move.x += 1
+				if Input.is_action_pressed("left"):
+					move.x -= 1
 			
 			move = move.normalized()
 			move = move.rotated(Vector3(0, 1, 0), rotation.y)
@@ -284,7 +300,7 @@ func _physics_process(delta):
 			y_vel -= GRAVITY
 			var just_jumped = false
 			#JUMP
-			if on_floor and Input.is_action_just_pressed("space"):
+			if on_floor and Input.is_action_just_pressed("space") and stunned <= 0:
 				just_jumped = true
 				y_vel = JUMP_FORCE
 			#CONSTANT GRAVITY WHEN ON FLOOR (FOR WALKING DOWN SLOPES)
@@ -336,6 +352,12 @@ func _physics_process(delta):
 				seen = 0
 				#rset("seen", clamp(seen - delta, 0))
 			
+			#BEING STUNNED TIME
+			if stunned > 0:
+				stunned -= delta
+			if stunned < 0:
+				stunned = 0
+			$Camera/CanvasLayer/Control/Stunned.visible = stunned > 0
 			
 			#POINT LOCATION
 			if not $Camera.is_position_behind(get_parent().get_node("Desert").get_node("Point").get_node("Icon").global_transform.origin):
@@ -393,6 +415,7 @@ func _physics_process(delta):
 		rset("team", team)
 		rset("power_up", power_up)
 		rset("seen", seen)
+		rset("stunned", stunned)
 		rset("defence", defence)
 	else:
 		# THINGS HERE HAPPEN ONLY IF THIS SCENE ISN'T CONTROLLED BY THE CLIENT

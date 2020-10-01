@@ -23,12 +23,12 @@ func _ready():
 	pass # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
-#func _physics_process(delta):
-#	pass
+func _physics_process(delta):
+	set_collision_mask_bit(1, team == "B")
+	set_collision_mask_bit(2, team == "A")
+	$Hit.set_collision_mask_bit(1, team == "B")
+	$Hit.set_collision_mask_bit(2, team == "A")
+	pass
 
 
 func _on_Hit_body_entered(body):

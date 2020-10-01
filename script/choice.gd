@@ -45,3 +45,8 @@ func _on_wise_button_down():
 func _on_magno_button_down():
 	choice = "magno"
 	pass # Replace with function body.
+
+
+func _on_steady_button_down():
+	choice = "steady"
+	pass # Replace with function body.
